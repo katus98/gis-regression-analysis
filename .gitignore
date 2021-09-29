@@ -1,3 +1,9 @@
+.idea
+logs/
+*.iml
+*/target/
+**/resources/static/
+
 # Compiled class file
 *.class
 
