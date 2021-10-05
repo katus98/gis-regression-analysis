@@ -9,7 +9,9 @@
     <packaging>pom</packaging>
     <version>0.1.0</version>
     <modules>
+        <module>gis-regression-analysis-common</module>
         <module>gis-regression-analysis-core</module>
+        <module>gis-regression-analysis-example</module>
     </modules>
 
     <properties>
@@ -17,14 +19,23 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
+        <springboot.version>2.4.5</springboot.version>
+        <lombok.version>1.18.20</lombok.version>
+        <sshd-sftp.version>2.6.0</sshd-sftp.version>
+        <jsch.version>0.1.55</jsch.version>
+        <trilead-ssh2.version>1.0.0-build222</trilead-ssh2.version>
+        <ujmp.version>0.3.0</ujmp.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Boot 父级依赖 -->
+            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
             <dependency>
-                <groupId>org.ujmp</groupId>
-                <artifactId>ujmp</artifactId>
-                <version>0.3.0</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
