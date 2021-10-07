@@ -14,14 +14,14 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.katus</groupId>
+            <artifactId>gis-regression-analysis-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.ujmp</groupId>
             <artifactId>ujmp-core</artifactId>
             <version>${ujmp.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.katus</groupId>
-            <artifactId>gis-regression-analysis-common</artifactId>
-            <version>${version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -31,7 +31,6 @@
     <dependencyManagement>
         <dependencies>
             <!-- Spring Boot 父级依赖 -->
-            <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-dependencies -->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>

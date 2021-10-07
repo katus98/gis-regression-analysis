@@ -1,5 +1,6 @@
 package com.katus.data;
 
+import com.katus.exception.InvalidParamException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -55,6 +56,9 @@ public class HaiNingRecord implements Record<Long> {
                 break;
             case "xz":
                 xz++;
+                break;
+            default:
+                throw new InvalidParamException("No such X!");
         }
     }
 

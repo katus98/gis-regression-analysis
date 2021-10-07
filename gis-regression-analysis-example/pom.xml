@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.katus</groupId>
             <artifactId>gis-regression-analysis-core</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
