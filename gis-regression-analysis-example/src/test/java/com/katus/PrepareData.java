@@ -3,7 +3,7 @@ package com.katus;
 import com.katus.common.io.FsManipulator;
 import com.katus.common.io.FsManipulatorFactory;
 import com.katus.common.util.Strings;
-import com.katus.data.HaiNingRecord;
+import com.katus.data.HaiNingOriginalRecord;
 import com.katus.exception.InvalidParamException;
 
 import java.io.IOException;
@@ -25,10 +25,10 @@ public class PrepareData {
         String outputFilename = args[2];
         FsManipulator manipulator = FsManipulatorFactory.create();
         List<String> stringList = manipulator.readToLines(basePath + targetFilename);
-        List<HaiNingRecord> dataList = new ArrayList<>();
+        List<HaiNingOriginalRecord> dataList = new ArrayList<>();
         for (String line : stringList) {
             List<String> items = Strings.splitToList(line, ",");
-            HaiNingRecord record = new HaiNingRecord();
+            HaiNingOriginalRecord record = new HaiNingOriginalRecord();
             record.setRoadId(Long.parseLong(items.get(16)));
             record.setFactor(Double.parseDouble(items.get(17)));
             record.setLonX(Double.parseDouble(items.get(19)));
@@ -44,7 +44,7 @@ public class PrepareData {
             }
         }
         stringList.clear();
-        for (HaiNingRecord record : dataList) {
+        for (HaiNingOriginalRecord record : dataList) {
             record.update();
             stringList.add(record.toString());
         }
