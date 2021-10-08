@@ -6,10 +6,9 @@ import com.katus.exception.InvalidParamException;
  * @author SUN Katus
  * @version 1.0, 2021-10-07
  */
-public class SimpleRecord extends AbstractRecord<Long, String> {
+public class SimpleRecord extends AbstractRecord<String> {
     protected final String SEPARATOR;
-    protected long id;
-    protected double[] xs;
+    protected double[] x;
     protected double y;
 
     public SimpleRecord(String str, String sep) {
@@ -18,16 +17,21 @@ public class SimpleRecord extends AbstractRecord<Long, String> {
     }
 
     @Override
-    public void setX(double[] xs) {
-        this.xs = xs;
+    public void setX(double[] x) {
+        this.x = x;
+    }
+
+    @Override
+    public int xSize() {
+        return x.length;
     }
 
     @Override
     public void setX(int index, double x) {
-        if (index < 0 || index >= xs.length) {
+        if (index < 0 || index >= xSize()) {
             throw new InvalidParamException();
         }
-        this.xs[index] = x;
+        this.x[index] = x;
     }
 
     @Override
@@ -36,43 +40,32 @@ public class SimpleRecord extends AbstractRecord<Long, String> {
     }
 
     @Override
-    public Long id() {
-        return id;
-    }
-
-    @Override
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Override
-    public double getY() {
+    public double y() {
         return y;
     }
 
     @Override
-    public double getX(int index) {
-        if (index < 0 || index >= xs.length) {
+    public double x(int index) {
+        if (index < 0 || index >= xSize()) {
             throw new InvalidParamException();
         }
-        return xs[index];
+        return x[index];
     }
 
     @Override
-    public double[] getX() {
-        return xs;
+    public double[] x() {
+        return x;
     }
 
     @Override
     public double[] load(String s) {
         String[] items = s.split(SEPARATOR);
-        if (items.length < 2) {
+        if (items.length < 1) {
             throw new InvalidParamException();
         }
-        setId(Long.valueOf(items[0]));
-        double[] data = new double[items.length - 1];
+        double[] data = new double[items.length];
         for (int i = 0; i < data.length; i++) {
-            data[i] = Double.parseDouble(items[i+1]);
+            data[i] = Double.parseDouble(items[i]);
         }
         return data;
     }

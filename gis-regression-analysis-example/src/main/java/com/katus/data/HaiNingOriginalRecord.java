@@ -63,17 +63,17 @@ public class HaiNingOriginalRecord implements Record {
     }
 
     @Override
-    public double getY() {
+    public double y() {
         return di;
     }
 
     @Override
-    public double getX(int index) {
-        return getX()[index];
+    public double x(int index) {
+        return x()[index];
     }
 
     @Override
-    public double[] getX() {
+    public double[] x() {
         return new double[]{big, gc, gd, middle, none, small, special, xz};
     }
 

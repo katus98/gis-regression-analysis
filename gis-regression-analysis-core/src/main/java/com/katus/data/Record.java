@@ -5,7 +5,14 @@ package com.katus.data;
  * @version 1.0, 2021-10-05
  */
 public interface Record {
-    double getY();
-    double getX(int index);
-    double[] getX();
+
+    double y();
+
+    double x(int index);
+
+    double[] x();
+
+    default int xSize() {
+        return x().length;
+    }
 }

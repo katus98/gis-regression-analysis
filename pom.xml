@@ -25,7 +25,7 @@
         <sshd-sftp.version>2.6.0</sshd-sftp.version>
         <jsch.version>0.1.55</jsch.version>
         <trilead-ssh2.version>1.0.0-build222</trilead-ssh2.version>
-        <ujmp.version>0.3.0</ujmp.version>
+        <nd4j.version>1.0.0-M1.1</nd4j.version>
     </properties>
 
     <dependencyManagement>
