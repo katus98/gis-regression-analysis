@@ -12,8 +12,9 @@ public class SimpleRecord extends AbstractRecord<String> {
     protected double y;
 
     public SimpleRecord(String str, String sep) {
-        super(str);
+        super();
         this.SEPARATOR = sep;
+        init(str);
     }
 
     @Override

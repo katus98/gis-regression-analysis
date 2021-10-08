@@ -6,12 +6,11 @@ package com.katus.data;
  */
 public abstract class AbstractRecord<R> implements Record {
 
-    public AbstractRecord(R r) {
-        double[] data = load(r);
-        setY(data[0]);
-        double[] xs = new double[data.length - 1];
-        System.arraycopy(data, 1, xs, 0, xs.length);
-        setX(xs);
+    AbstractRecord() {
+    }
+
+    protected AbstractRecord(R r) {
+        init(r);
     }
 
     public abstract void setX(double[] xs);
@@ -21,4 +20,12 @@ public abstract class AbstractRecord<R> implements Record {
     public abstract void setY(double y);
 
     protected abstract double[] load(R r);
+
+    void init(R r) {
+        double[] data = load(r);
+        setY(data[0]);
+        double[] xs = new double[data.length - 1];
+        System.arraycopy(data, 1, xs, 0, xs.length);
+        setX(xs);
+    }
 }

@@ -9,4 +9,12 @@ public class SimpleIdDataSet extends AbstractDataSet<SimpleIdRecord> {
     public SimpleIdDataSet(DataSetLoader<SimpleIdRecord> loader) {
         super(loader);
     }
+
+    public int idToIndex(Long id) {
+        return id.intValue() - 1;
+    }
+
+    public SimpleIdRecord getRecord(Long id) {
+        return getRecord(idToIndex(id));
+    }
 }

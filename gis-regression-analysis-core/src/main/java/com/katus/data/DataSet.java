@@ -18,17 +18,29 @@ public interface DataSet {
     int size();
 
     default INDArray yMatrix() {
+        return Nd4j.create(yArray(), new int[]{size(), 1});
+    }
+
+    default INDArray yMatrixT() {
         return Nd4j.create(yArray());
     }
 
     default INDArray xMatrix(int index) {
-        return Nd4j.create(xArray(index));
+        return xMatrix().getColumn(index);
     }
 
     default INDArray xMatrix() {
-        double[][] xM = new double[xSize()][];
-        for (int i = 0; i < xSize(); i++) {
-            xM[i] = xArray(i);
+        return xMatrixT().transpose();
+    }
+
+    default INDArray xMatrixT() {
+        double[][] xM = new double[xSize() + 1][];
+        xM[0] = new double[size()];
+        for (int i = 0; i < size(); i++) {
+            xM[0][i] = 1.0;
+        }
+        for (int i = 1; i < xSize() + 1; i++) {
+            xM[i] = xArray(i - 1);
         }
         return Nd4j.create(xM);
     }

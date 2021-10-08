@@ -6,7 +6,7 @@ import com.katus.exception.InvalidParamException;
  * @author SUN Katus
  * @version 1.0, 2021-10-08
  */
-public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long> {
+public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long>, Comparable<SimpleIdRecord> {
     protected Long id;
 
     public SimpleIdRecord(String str, String sep) {
@@ -35,5 +35,10 @@ public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long> {
             data[i] = Double.parseDouble(items[i+1]);
         }
         return data;
+    }
+
+    @Override
+    public int compareTo(SimpleIdRecord o) {
+        return id.compareTo(o.id);
     }
 }
