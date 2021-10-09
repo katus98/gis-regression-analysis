@@ -2,6 +2,8 @@ package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
 
+import java.util.Objects;
+
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-08
@@ -40,5 +42,18 @@ public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long>, 
     @Override
     public int compareTo(SimpleIdRecord o) {
         return id.compareTo(o.id);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SimpleIdRecord that = (SimpleIdRecord) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

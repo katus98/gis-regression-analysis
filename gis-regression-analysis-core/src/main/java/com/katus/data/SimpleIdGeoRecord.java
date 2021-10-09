@@ -14,6 +14,22 @@ public class SimpleIdGeoRecord extends SimpleIdRecord {
         super(str, sep);
     }
 
+    public double getLonX() {
+        return lonX;
+    }
+
+    public void setLonX(double lonX) {
+        this.lonX = lonX;
+    }
+
+    public double getLatY() {
+        return latY;
+    }
+
+    public void setLatY(double latY) {
+        this.latY = latY;
+    }
+
     @Override
     public double[] load(String s) {
         String[] items = s.split(SEPARATOR);
