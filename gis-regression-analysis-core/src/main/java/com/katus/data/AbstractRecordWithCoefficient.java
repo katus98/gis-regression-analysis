@@ -24,6 +24,10 @@ public abstract class AbstractRecordWithCoefficient<R extends Record> implements
         predict();
     }
 
+    public R getBaseRecord() {
+        return record;
+    }
+
     @Override
     public double[] beta() {
         return beta;
