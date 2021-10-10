@@ -40,6 +40,11 @@ public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long>, 
     }
 
     @Override
+    public String put() {
+        return id + SEPARATOR + super.put();
+    }
+
+    @Override
     public int compareTo(SimpleIdRecord o) {
         return id.compareTo(o.id);
     }

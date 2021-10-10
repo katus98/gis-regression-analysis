@@ -1,10 +1,14 @@
 package com.katus.data;
 
+import com.katus.exception.InvalidParamException;
+
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-07
  */
 public abstract class AbstractRecord<R> implements Record {
+    protected double[] x;
+    protected double y;
 
     AbstractRecord() {
     }
@@ -13,13 +17,42 @@ public abstract class AbstractRecord<R> implements Record {
         init(r);
     }
 
-    public abstract void setX(double[] xs);
+    public void setX(double[] x) {
+        this.x = x;
+    }
 
-    public abstract void setX(int index, double x);
+    public void setX(int index, double x) {
+        if (index < 0 || index >= xSize()) {
+            throw new InvalidParamException();
+        }
+        this.x[index] = x;
+    }
 
-    public abstract void setY(double y);
+    public void setY(double y) {
+        this.y = y;
+    }
 
-    protected abstract double[] load(R r);
+    public abstract double[] load(R r);
+
+    public abstract String put();
+
+    @Override
+    public double y() {
+        return y;
+    }
+
+    @Override
+    public double x(int index) {
+        if (index < 0 || index >= xSize()) {
+            throw new InvalidParamException();
+        }
+        return x[index];
+    }
+
+    @Override
+    public double[] x() {
+        return x;
+    }
 
     void init(R r) {
         double[] data = load(r);

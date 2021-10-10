@@ -6,7 +6,7 @@ package com.katus.data;
  */
 public class SimpleIdDataSet extends AbstractDataSet<SimpleIdRecord> {
 
-    public SimpleIdDataSet(DataSetLoader<SimpleIdRecord> loader) {
+    public SimpleIdDataSet(DataSetInput<SimpleIdRecord> loader) {
         super(loader);
     }
 

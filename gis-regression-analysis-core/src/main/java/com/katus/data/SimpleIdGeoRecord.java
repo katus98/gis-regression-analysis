@@ -45,4 +45,9 @@ public class SimpleIdGeoRecord extends SimpleIdRecord {
         this.latY = Double.parseDouble(items[items.length-1]);
         return data;
     }
+
+    @Override
+    public String put() {
+        return super.put() + SEPARATOR + lonX + SEPARATOR + latY;
+    }
 }

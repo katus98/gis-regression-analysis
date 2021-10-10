@@ -6,7 +6,7 @@ package com.katus.data;
  */
 public class SimpleIdGeoDataSet extends AbstractDataSet<SimpleIdGeoRecord> {
 
-    public SimpleIdGeoDataSet(DataSetLoader<SimpleIdGeoRecord> loader) {
+    public SimpleIdGeoDataSet(DataSetInput<SimpleIdGeoRecord> loader) {
         super(loader);
     }
 }

@@ -6,7 +6,7 @@ package com.katus.data;
  */
 public class HaiNingDataSet extends AbstractDataSet<HaiNingRecord> {
 
-    public HaiNingDataSet(DataSetLoader<HaiNingRecord> loader) {
+    public HaiNingDataSet(DataSetInput<HaiNingRecord> loader) {
         super(loader);
     }
 }

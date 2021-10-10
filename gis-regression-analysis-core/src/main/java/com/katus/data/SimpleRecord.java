@@ -8,54 +8,11 @@ import com.katus.exception.InvalidParamException;
  */
 public class SimpleRecord extends AbstractRecord<String> {
     protected final String SEPARATOR;
-    protected double[] x;
-    protected double y;
 
     public SimpleRecord(String str, String sep) {
         super();
         this.SEPARATOR = sep;
         init(str);
-    }
-
-    @Override
-    public void setX(double[] x) {
-        this.x = x;
-    }
-
-    @Override
-    public int xSize() {
-        return x.length;
-    }
-
-    @Override
-    public void setX(int index, double x) {
-        if (index < 0 || index >= xSize()) {
-            throw new InvalidParamException();
-        }
-        this.x[index] = x;
-    }
-
-    @Override
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    @Override
-    public double y() {
-        return y;
-    }
-
-    @Override
-    public double x(int index) {
-        if (index < 0 || index >= xSize()) {
-            throw new InvalidParamException();
-        }
-        return x[index];
-    }
-
-    @Override
-    public double[] x() {
-        return x;
     }
 
     @Override
@@ -69,5 +26,15 @@ public class SimpleRecord extends AbstractRecord<String> {
             data[i] = Double.parseDouble(items[i]);
         }
         return data;
+    }
+
+    @Override
+    public String put() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(y);
+        for (int i = 0; i < xSize(); i++) {
+            sb.append(SEPARATOR).append(x(i));
+        }
+        return sb.toString();
     }
 }

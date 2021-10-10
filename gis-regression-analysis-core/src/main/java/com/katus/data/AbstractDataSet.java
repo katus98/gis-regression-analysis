@@ -14,9 +14,17 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet {
     protected volatile boolean latest = false;
     private volatile INDArray xMatrix, yMatrix, xMatrixT, yMatrixT;
 
-    public AbstractDataSet(DataSetLoader<R> loader) {
-        this.records = loader.load();
+    protected AbstractDataSet(DataSetInput<R> loader) {
+        input(loader);
+    }
+
+    public void input(DataSetInput<R> input) {
+        this.records = input.input();
         update();
+    }
+
+    public void output(DataSetOutput<R> output) {
+        output.output(records);
     }
 
     public R getRecord(int index) {
