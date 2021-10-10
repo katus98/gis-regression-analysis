@@ -10,8 +10,8 @@ import com.katus.exception.InvalidParamException;
  */
 public class GeoWeightCalculator extends WeightCalculator<SimpleIdGeoRecord> {
 
-    protected GeoWeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<SimpleIdGeoRecord> trainingDataSet) {
-        super(bandwidthType, weightType, bandwidth, trainingDataSet);
+    protected GeoWeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<SimpleIdGeoRecord> trainingDataSet, WeightFunction weightFunction) {
+        super(bandwidthType, weightType, bandwidth, trainingDataSet, weightFunction);
     }
 
     @Override
@@ -23,10 +23,10 @@ public class GeoWeightCalculator extends WeightCalculator<SimpleIdGeoRecord> {
 
         @Override
         public GeoWeightCalculator build() {
-            if (bandwidth <= 0.0 || trainingDataSet == null) {
+            if (!check()) {
                 throw new InvalidParamException();
             }
-            return new GeoWeightCalculator(bandwidthType, weightType, bandwidth, trainingDataSet);
+            return new GeoWeightCalculator(bandwidthType, weightType, bandwidth, trainingDataSet, weightFunction);
         }
     }
 }

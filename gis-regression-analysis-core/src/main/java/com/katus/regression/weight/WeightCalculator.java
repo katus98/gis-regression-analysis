@@ -19,13 +19,15 @@ public abstract class WeightCalculator<R extends Record> {
     protected final WeightType weightType;
     protected final double bandwidth;
     protected final AbstractDataSet<R> trainingDataSet;
+    protected final WeightFunction weightFunction;
     protected Map<R, Double> distances = null;
 
-    protected WeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<R> trainingDataSet) {
+    protected WeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<R> trainingDataSet, WeightFunction weightFunction) {
         this.bandwidthType = bandwidthType;
         this.weightType = weightType;
         this.bandwidth = bandwidth;
         this.trainingDataSet = trainingDataSet;
+        this.weightFunction = weightFunction;
     }
 
     public INDArray calWeightMatrix(R r1) {
@@ -49,6 +51,9 @@ public abstract class WeightCalculator<R extends Record> {
                     break;
                 case GAUSSIAN:
                     weight = Math.pow(Math.E, -Math.pow(getDistance(r2) / getBandwidth(), 2));
+                    break;
+                case CUSTOMIZED:
+                    weight = weightFunction.weight(getDistance(r2), getBandwidth());
                     break;
                 default:
                     weight = 0.0;
@@ -109,8 +114,13 @@ public abstract class WeightCalculator<R extends Record> {
         protected WeightType weightType = WeightType.BI_SQUARE;
         protected double bandwidth = 0.0;
         protected AbstractDataSet<R> trainingDataSet = null;
+        protected WeightFunction weightFunction = null;
 
         public abstract WeightCalculator<R> build();
+
+        public boolean check() {
+            return bandwidth > 0.0 && trainingDataSet != null && (!WeightType.CUSTOMIZED.equals(weightType) || weightFunction != null);
+        }
 
         public WeightCalculatorBuilder<R> bandwidthType(BandwidthType bandwidthType) {
             this.bandwidthType = bandwidthType;
@@ -129,6 +139,11 @@ public abstract class WeightCalculator<R extends Record> {
 
         public WeightCalculatorBuilder<R> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
             this.trainingDataSet = trainingDataSet;
+            return this;
+        }
+
+        public WeightCalculatorBuilder<R> weightFunction(WeightFunction weightFunction) {
+            this.weightFunction = weightFunction;
             return this;
         }
     }

@@ -6,5 +6,6 @@ package com.katus.regression.weight;
  */
 public enum WeightType {
     BI_SQUARE,
-    GAUSSIAN
+    GAUSSIAN,
+    CUSTOMIZED
 }
