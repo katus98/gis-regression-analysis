@@ -28,4 +28,9 @@ public abstract class AbstractResultDataSet<R extends Record> extends AbstractDa
         }
         records.get(index).setBeta(beta);
     }
+
+    @Override
+    public AbstractResultDataSet<R> clone() throws CloneNotSupportedException {
+        return (AbstractResultDataSet<R>) super.clone();
+    }
 }

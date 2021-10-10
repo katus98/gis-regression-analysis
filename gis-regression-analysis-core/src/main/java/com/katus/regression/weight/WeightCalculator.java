@@ -32,7 +32,7 @@ public abstract class WeightCalculator<R extends Record> {
 
     public INDArray calWeightMatrix(R r1) {
         initDistances(r1);
-        INDArray matrix = Nd4j.zeros(trainingDataSet.size(), trainingDataSet.size());
+        INDArray matrix = Nd4j.eye(trainingDataSet.size());
         for (int i = 0; i < trainingDataSet.size(); i++) {
             R r2 = trainingDataSet.getRecord(i);
             matrix.putScalar(new int[]{i, i}, calWeight(r2));

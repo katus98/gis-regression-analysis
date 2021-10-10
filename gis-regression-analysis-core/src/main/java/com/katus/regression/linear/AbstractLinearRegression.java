@@ -21,6 +21,12 @@ public abstract class AbstractLinearRegression<R extends Record> implements Regr
         this.predictDataSet = predictDataSet;
     }
 
+    public AbstractResultDataSet<R> getResultDataSet() {
+        train();
+        predict();
+        return predictDataSet;
+    }
+
     protected static void waitingForFinish(ExecutorService es, String doing) {
         es.shutdown();
         try {

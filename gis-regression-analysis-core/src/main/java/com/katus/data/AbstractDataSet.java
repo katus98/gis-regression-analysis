@@ -3,13 +3,14 @@ package com.katus.data;
 import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-08
  */
-public abstract class AbstractDataSet<R extends Record> implements DataSet {
+public abstract class AbstractDataSet<R extends Record> implements DataSet, Cloneable {
     protected List<R> records;
     protected volatile boolean latest = false;
     private volatile INDArray xMatrix, yMatrix, xMatrixT, yMatrixT;
@@ -34,9 +35,24 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet {
         return records.get(index);
     }
 
-    public void addRecord(R r) {
+    public synchronized void addRecord(R r) {
         this.latest = false;
         records.add(r);
+    }
+
+    public R removeRecord(int index) {
+        if (index < 0 || index >= size()) {
+            throw new InvalidParamException();
+        }
+        synchronized (this) {
+            this.latest = false;
+            return records.remove(index);
+        }
+    }
+
+    public synchronized void clear() {
+        records.clear();
+        this.latest = false;
     }
 
     @Override
@@ -106,5 +122,29 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet {
                 }
             }
         }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public AbstractDataSet<R> clone() throws CloneNotSupportedException {
+        AbstractDataSet<R> clone = (AbstractDataSet<R>) super.clone();
+        clone.records = new ArrayList<>(records);
+        clone.latest = false;
+        return clone;
+    }
+
+    public AbstractResultDataSet<R> convertToResultDataSet() {
+        class TempRecordWithCoefficient extends AbstractRecordWithCoefficient<R> {
+            public TempRecordWithCoefficient(R record) {
+                this.record = record;
+            }
+        }
+        return new AbstractResultDataSet<R>(() -> {
+            List<AbstractRecordWithCoefficient<R>> list = new ArrayList<>();
+            for (R record : records) {
+                list.add(new TempRecordWithCoefficient(record));
+            }
+            return list;
+        }) {};
     }
 }
