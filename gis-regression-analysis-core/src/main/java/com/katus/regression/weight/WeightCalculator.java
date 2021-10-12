@@ -40,6 +40,16 @@ public abstract class WeightCalculator<R extends Record> {
         return matrix;
     }
 
+    public boolean[] calBoolArray(R r1) {
+        initDistances(r1);
+        boolean[] array = new boolean[trainingDataSet.size()];
+        for (int i = 0; i < trainingDataSet.size(); i++) {
+            R r2 = trainingDataSet.getRecord(i);
+            array[i] = withInBandwidth(r2);
+        }
+        return array;
+    }
+
     public abstract double calDistance(R r1, R r2);
 
     private double calWeight(R r2) {

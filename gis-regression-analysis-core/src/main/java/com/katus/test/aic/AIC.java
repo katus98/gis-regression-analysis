@@ -1,7 +1,7 @@
 package com.katus.test.aic;
 
 import com.katus.data.AbstractDataSet;
-import com.katus.data.AbstractRecordWithCoefficient;
+import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.AbstractResultDataSet;
 import com.katus.data.Record;
 import com.katus.exception.DataException;
@@ -42,7 +42,7 @@ public class AIC<R extends Record> implements Test {
     private double aic(AbstractResultDataSet<R> resultDataSet) {
         double squareSum = 0.0;
         for (int i = 0; i < resultDataSet.size(); i++) {
-            AbstractRecordWithCoefficient<R> record = resultDataSet.getRecord(i);
+            AbstractResultRecordWithInfo<R> record = resultDataSet.getRecord(i);
             double predictValue = record.prediction();
             double trueValue = record.y();
             squareSum += Math.pow(predictValue - trueValue, 2);

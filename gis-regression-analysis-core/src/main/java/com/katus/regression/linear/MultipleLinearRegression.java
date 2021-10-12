@@ -89,8 +89,11 @@ public class MultipleLinearRegression<R extends Record> extends AbstractLinearRe
         private int numThread = 1;
 
         public MultipleLinearRegression<R> build() {
-            if (trainingDataSet == null || predictDataSet == null) {
+            if (predictDataSet == null) {
                 throw new InvalidParamException();
+            }
+            if (trainingDataSet == null) {
+                this.trainingDataSet = predictDataSet.convertToSourceDataSet();
             }
             return new MultipleLinearRegression<>(trainingDataSet, predictDataSet, numThread);
         }

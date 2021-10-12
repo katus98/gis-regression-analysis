@@ -6,10 +6,11 @@ import com.katus.exception.InvalidParamException;
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class AbstractRecordWithCoefficient<R extends Record> implements Record, Coefficient, Prediction {
+public abstract class AbstractResultRecordWithInfo<R extends Record> implements Record, Coefficient, Prediction, RSquare {
     protected R record;
     protected double[] beta;
-    protected double prediction;
+    protected double prediction = Constants.NO_DATA;
+    protected double rSquare = Constants.NO_DATA;
 
     public void predict() {
         double pre = beta(0);
@@ -80,5 +81,15 @@ public abstract class AbstractRecordWithCoefficient<R extends Record> implements
     @Override
     public double prediction() {
         return prediction;
+    }
+
+    @Override
+    public double rSquare() {
+        return rSquare;
+    }
+
+    @Override
+    public void setRSquare(double rSquare) {
+        this.rSquare = rSquare;
     }
 }

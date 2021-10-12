@@ -117,8 +117,11 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
         private int numThread = Runtime.getRuntime().availableProcessors() / 2 + 1;
 
         public WeightedRegression<R> build() {
-            if (trainingDataSet == null || predictDataSet == null || weightCalculator == null || numThread < 1) {
+            if (predictDataSet == null || weightCalculator == null || numThread < 1) {
                 throw new InvalidParamException();
+            }
+            if (trainingDataSet == null) {
+                this.trainingDataSet = predictDataSet.convertToSourceDataSet();
             }
             return new WeightedRegression<>(trainingDataSet, predictDataSet, weightCalculator, numThread);
         }

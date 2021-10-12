@@ -1,5 +1,6 @@
 package com.katus.test.r;
 
+import com.katus.data.Constants;
 import com.katus.test.Test;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
@@ -7,12 +8,12 @@ import org.nd4j.linalg.api.ndarray.INDArray;
  * @author SUN Katus
  * @version 1.0, 2021-10-10
  */
-public class GlobalR implements Test {
+public class GlobalRSquare implements Test {
     private final INDArray trueValueMatrix;
     private final double[] predictValues;
-    private volatile double r2 = -1.0;
+    private volatile double r2 = Constants.NO_DATA;
 
-    public GlobalR(INDArray trueValueMatrix, double[] predictValues) {
+    public GlobalRSquare(INDArray trueValueMatrix, double[] predictValues) {
         this.trueValueMatrix = trueValueMatrix;
         this.predictValues = predictValues;
     }
@@ -24,9 +25,9 @@ public class GlobalR implements Test {
 
     @Override
     public void test() {
-        if (r2 < 0) {
+        if (r2 == Constants.NO_DATA) {
             synchronized (this) {
-                if (r2 < 0) {
+                if (r2 == Constants.NO_DATA) {
                     double avg = trueValueMatrix.meanNumber().doubleValue();
                     double s2 = trueValueMatrix.varNumber().doubleValue();
                     double result = 0.0;
@@ -41,6 +42,6 @@ public class GlobalR implements Test {
 
     @Override
     public boolean pass() {
-        return false;
+        return r2 != Constants.NO_DATA;
     }
 }

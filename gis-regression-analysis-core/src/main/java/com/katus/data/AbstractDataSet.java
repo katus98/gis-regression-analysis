@@ -134,15 +134,15 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
     }
 
     public AbstractResultDataSet<R> convertToResultDataSet() {
-        class TempRecordWithCoefficient extends AbstractRecordWithCoefficient<R> {
-            public TempRecordWithCoefficient(R record) {
+        class TempResultRecordWithInfo extends AbstractResultRecordWithInfo<R> {
+            public TempResultRecordWithInfo(R record) {
                 this.record = record;
             }
         }
         return new AbstractResultDataSet<R>(() -> {
-            List<AbstractRecordWithCoefficient<R>> list = new ArrayList<>();
+            List<AbstractResultRecordWithInfo<R>> list = new ArrayList<>();
             for (R record : records) {
-                list.add(new TempRecordWithCoefficient(record));
+                list.add(new TempResultRecordWithInfo(record));
             }
             return list;
         }) {};

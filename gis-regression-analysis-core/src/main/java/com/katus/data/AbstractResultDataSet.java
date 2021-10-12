@@ -4,13 +4,16 @@ import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class AbstractResultDataSet<R extends Record> extends AbstractDataSet<AbstractRecordWithCoefficient<R>> {
+public abstract class AbstractResultDataSet<R extends Record> extends AbstractDataSet<AbstractResultRecordWithInfo<R>> {
 
-    protected AbstractResultDataSet(DataSetInput<AbstractRecordWithCoefficient<R>> loader) {
+    protected AbstractResultDataSet(DataSetInput<AbstractResultRecordWithInfo<R>> loader) {
         super(loader);
     }
 
@@ -32,5 +35,17 @@ public abstract class AbstractResultDataSet<R extends Record> extends AbstractDa
     @Override
     public AbstractResultDataSet<R> clone() throws CloneNotSupportedException {
         return (AbstractResultDataSet<R>) super.clone();
+    }
+
+    public AbstractDataSet<R> convertToSourceDataSet() {
+        return new AbstractDataSet<R>(() -> {
+            List<R> list = new ArrayList<>();
+            for (AbstractResultRecordWithInfo<R> record : records) {
+                if (record.y() != Constants.NO_DATA) {
+                    list.add(record.getBaseRecord());
+                }
+            }
+            return list;
+        }) {};
     }
 }

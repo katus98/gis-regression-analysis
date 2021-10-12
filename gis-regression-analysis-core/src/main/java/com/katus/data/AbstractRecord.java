@@ -8,7 +8,7 @@ import com.katus.exception.InvalidParamException;
  */
 public abstract class AbstractRecord<R> implements Record {
     protected double[] x;
-    protected double y;
+    protected double y = Constants.NO_DATA;
 
     AbstractRecord() {
     }
