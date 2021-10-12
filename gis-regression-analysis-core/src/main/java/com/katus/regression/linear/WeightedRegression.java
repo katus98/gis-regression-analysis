@@ -3,6 +3,7 @@ package com.katus.regression.linear;
 import com.katus.data.AbstractDataSet;
 import com.katus.data.AbstractResultDataSet;
 import com.katus.data.Record;
+import com.katus.exception.DataException;
 import com.katus.exception.InvalidParamException;
 import com.katus.regression.weight.WeightCalculator;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -40,7 +41,7 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
                         } else {
                             end += interval;
                         }
-                        executorService.submit(this.new WeightedRegressionTrainer(start, end));
+                        executorService.submit(this.new WeightedRegressionTrainer(start, end, weightCalculator));
                     }
                     waitingForFinish(executorService, "Training");
                     this.trained = true;
@@ -75,10 +76,16 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
 
     public class WeightedRegressionTrainer implements Runnable {
         private final int start, end;
+        private final WeightCalculator<R> weightCalculator;
 
-        public WeightedRegressionTrainer(int start, int end) {
+        public WeightedRegressionTrainer(int start, int end, WeightCalculator<R> weightCalculator) {
             this.start = start;
             this.end = end;
+            try {
+                this.weightCalculator = weightCalculator.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new DataException();
+            }
         }
 
         @Override

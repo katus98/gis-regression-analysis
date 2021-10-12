@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class WeightCalculator<R extends Record> {
+public abstract class WeightCalculator<R extends Record> implements Cloneable {
     protected final BandwidthType bandwidthType;
     protected final WeightType weightType;
     protected final double bandwidth;
@@ -117,6 +117,12 @@ public abstract class WeightCalculator<R extends Record> {
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public WeightCalculator<R> clone() throws CloneNotSupportedException {
+        return (WeightCalculator<R>) super.clone();
     }
 
     public abstract static class WeightCalculatorBuilder<R extends Record> {
