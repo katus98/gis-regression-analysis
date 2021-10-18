@@ -6,6 +6,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -281,7 +282,7 @@ public interface FsManipulator {
      * @param charset 编码字符集
      * @throws IOException IO异常
      */
-    default void writeTextToFile(String path, List<String> content, Charset charset) throws IOException {
+    default void writeTextToFile(String path, Collection<String> content, Charset charset) throws IOException {
         BufferedWriter writer = new BufferedWriter(this.writeAsText(path, charset));
         for (String line : content) {
             writer.write(line + "\n");
@@ -289,7 +290,7 @@ public interface FsManipulator {
         IOUtils.closeAll(writer);
     }
 
-    default void writeTextToFile(String path, List<String> content) throws IOException {
+    default void writeTextToFile(String path, Collection<String> content) throws IOException {
         this.writeTextToFile(path, content, StandardCharsets.UTF_8);
     }
 }
