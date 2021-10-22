@@ -2,6 +2,7 @@ package com.katus;
 
 import com.katus.common.io.FsManipulator;
 import com.katus.common.io.FsManipulatorFactory;
+import com.katus.common.util.Strings;
 import com.katus.exception.InvalidParamException;
 
 import java.io.IOException;
@@ -25,12 +26,13 @@ public class PoiTool {
         List<String> strList = new ArrayList<>(lineList.size());
         StringBuilder builder = new StringBuilder();
         for (String line : lineList) {
-            String[] items = line.split(",");
-            String kind = items[2].split(";")[0];
+            List<String> itemList = Strings.splitToList(line, ",");
+            String kind = itemList.get(2).split(";")[0];
+            itemList.add(2, kind);
             builder.delete(0, builder.length());
-            builder.append(items[0]).append(',').append(items[1]).append(',').append(kind);
-            for (int i = 2; i < items.length; i++) {
-                builder.append(',').append(items[i]);
+            builder.append(itemList.get(0));
+            for (int i = 1; i < itemList.size(); i++) {
+                builder.append(',').append(itemList.get(i));
             }
             strList.add(builder.toString());
         }
