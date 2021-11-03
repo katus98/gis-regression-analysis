@@ -253,6 +253,18 @@ public interface FsManipulator {
     }
 
     /**
+     * 获取文本行迭代器
+     * @param path 文本文件路径
+     * @param charset 字符集
+     * @return 文本行迭代器
+     */
+    LineIterator getLineIterator(String path, Charset charset) throws IOException;
+
+    default LineIterator getLineIterator(String path) throws IOException {
+        return getLineIterator(path, StandardCharsets.UTF_8);
+    }
+
+    /**
      * 从文件中读取文本
      * @param path 文件路径
      * @param charset 解码字符集

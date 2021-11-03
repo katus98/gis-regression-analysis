@@ -3,6 +3,7 @@ package com.katus.common.io;
 import com.katus.common.util.IOUtils;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -134,6 +135,11 @@ public class LocalFsManipulator implements FsManipulator {
             }
             return totalSize;
         }
+    }
+
+    @Override
+    public LineIterator getLineIterator(String path, Charset charset) throws IOException {
+        return new LocalLineIterator(this.readAsText(path, charset));
     }
 
     private void compressToZip(File file, ZipOutputStream zos, String prefix) throws IOException {
