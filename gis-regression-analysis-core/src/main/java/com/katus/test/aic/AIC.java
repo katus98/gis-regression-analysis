@@ -10,6 +10,8 @@ import com.katus.exception.InvalidParamException;
 import com.katus.regression.linear.AbstractLinearRegression;
 import com.katus.regression.linear.MultipleLinearRegression;
 import com.katus.test.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -20,6 +22,8 @@ import java.util.Random;
  * @version 1.0, 2021-10-09
  */
 public class AIC<R extends Record, RR extends AbstractResultRecordWithInfo<R>> implements Test {
+    private static final Logger logger = LoggerFactory.getLogger(AIC.class);
+
     private final AbstractDataSet<R> testDataSet;
     private final LinearRegressionBuilder<R, RR> linearRegressionBuilder;
     private final double trainingRatio;
@@ -64,6 +68,7 @@ public class AIC<R extends Record, RR extends AbstractResultRecordWithInfo<R>> i
                         trainingDataSet = testDataSet.clone();
                         predictDataSet = testDataSet.clone();
                     } catch (CloneNotSupportedException e) {
+                        logger.error("failed to clone dataset", e);
                         throw new DataException();
                     }
                     int moveSize = (int) (Math.min(trainingRatio, 1 - trainingRatio) * testDataSet.size());
@@ -105,6 +110,8 @@ public class AIC<R extends Record, RR extends AbstractResultRecordWithInfo<R>> i
     }
 
     public static class AICBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
+        private static final Logger logger = LoggerFactory.getLogger(AICBuilder.class);
+
         private AbstractDataSet<R> testDataSet;
         private LinearRegressionBuilder<R, RR> linearRegressionBuilder;
         private double trainingRatio = 0.7;
@@ -113,6 +120,7 @@ public class AIC<R extends Record, RR extends AbstractResultRecordWithInfo<R>> i
 
         public AIC<R, RR> build() {
             if (!check()) {
+                logger.error("aic params are invalid");
                 throw new InvalidParamException();
             }
             return new AIC<>(testDataSet, linearRegressionBuilder, trainingRatio, bandwidths, clazz);

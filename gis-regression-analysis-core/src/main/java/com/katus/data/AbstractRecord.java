@@ -1,12 +1,16 @@
 package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-07
  */
 public abstract class AbstractRecord<R> implements Record {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractRecord.class);
+
     protected double[] x;
     protected double y = Constants.NO_DATA;
 
@@ -23,6 +27,7 @@ public abstract class AbstractRecord<R> implements Record {
 
     public void setX(int index, double x) {
         if (index < 0 || index >= xSize()) {
+            logger.error("index of x is out of range");
             throw new InvalidParamException();
         }
         this.x[index] = x;
@@ -44,6 +49,7 @@ public abstract class AbstractRecord<R> implements Record {
     @Override
     public double x(int index) {
         if (index < 0 || index >= xSize()) {
+            logger.error("index of x is out of range");
             throw new InvalidParamException();
         }
         return x[index];

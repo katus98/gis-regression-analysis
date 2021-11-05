@@ -7,6 +7,8 @@ import com.katus.data.Record;
 import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.inverse.InvertMatrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -85,12 +87,15 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
     }
 
     public static class MultipleLinearRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
+        private static final Logger logger = LoggerFactory.getLogger(MultipleLinearRegressionBuilder.class);
+
         private AbstractDataSet<R> trainingDataSet;
         private AbstractResultDataSet<R, RR> predictDataSet;
         private int numThread = 1;
 
         public MultipleLinearRegression<R, RR> build() {
             if (predictDataSet == null) {
+                logger.error("multiple linear regression params are invalid");
                 throw new InvalidParamException();
             }
             if (trainingDataSet == null) {

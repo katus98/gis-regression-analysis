@@ -9,6 +9,8 @@ import com.katus.exception.InvalidParamException;
 import com.katus.regression.weight.WeightCalculator;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.inverse.InvertMatrix;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,6 +20,8 @@ import java.util.concurrent.Executors;
  * @version 1.0, 2021-10-08
  */
 public class WeightedRegression<R extends Record, RR extends AbstractResultRecordWithInfo<R>> extends AbstractLinearRegression<R, RR> {
+    private static final Logger logger = LoggerFactory.getLogger(WeightedRegression.class);
+
     protected final WeightCalculator<R> weightCalculator;
     protected final int numThread;
     private volatile boolean trained = false, predicted = false;
@@ -85,6 +89,7 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
             try {
                 this.weightCalculator = weightCalculator.clone();
             } catch (CloneNotSupportedException e) {
+                logger.error("failed to clone weight calculator", e);
                 throw new DataException();
             }
         }
@@ -123,6 +128,8 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
     }
 
     public static class WeightedRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
+        private static final Logger logger = LoggerFactory.getLogger(WeightedRegressionBuilder.class);
+
         private AbstractDataSet<R> trainingDataSet;
         private AbstractResultDataSet<R, RR> predictDataSet;
         private WeightCalculator<R> weightCalculator;
@@ -130,6 +137,7 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
 
         public WeightedRegression<R, RR> build() {
             if (predictDataSet == null || weightCalculator == null || numThread < 1) {
+                logger.error("weighted regression params are invalid");
                 throw new InvalidParamException();
             }
             if (trainingDataSet == null) {

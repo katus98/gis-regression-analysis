@@ -5,6 +5,8 @@ import com.katus.exception.InvalidParamException;
 import com.katus.regression.linear.WeightedRegression;
 import com.katus.regression.weight.WeightCalculator;
 import com.katus.test.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author SUN Katus
@@ -76,6 +78,8 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
     }
 
     public static class LocalRSquareBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
+        private static final Logger logger = LoggerFactory.getLogger(LocalRSquareBuilder.class);
+
         private AbstractDataSet<R> trainingDataSet;
         private AbstractResultDataSet<R, RR> predictDataSet;
         private WeightCalculator<R> weightCalculator;
@@ -83,6 +87,7 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
 
         public LocalRSquare<R, RR> build() {
             if (predictDataSet == null || weightCalculator == null || numThread < 1) {
+                logger.error("local r params are invalid");
                 throw new InvalidParamException();
             }
             if (trainingDataSet == null) {

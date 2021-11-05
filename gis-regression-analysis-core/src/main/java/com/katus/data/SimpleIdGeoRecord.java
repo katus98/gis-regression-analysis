@@ -1,12 +1,16 @@
 package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-08
  */
 public class SimpleIdGeoRecord extends SimpleIdRecord {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleIdGeoRecord.class);
+
     protected double lonX;
     protected double latY;
 
@@ -34,6 +38,7 @@ public class SimpleIdGeoRecord extends SimpleIdRecord {
     public double[] load(String s) {
         String[] items = s.split(SEPARATOR);
         if (items.length < 4) {
+            logger.error("item length is too short");
             throw new InvalidParamException();
         }
         setId(Long.valueOf(items[0]));

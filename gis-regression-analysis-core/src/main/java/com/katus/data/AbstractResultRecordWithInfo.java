@@ -1,6 +1,8 @@
 package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -9,6 +11,8 @@ import java.util.Arrays;
  * @version 1.0, 2021-10-09
  */
 public abstract class AbstractResultRecordWithInfo<R extends Record> implements Record, Coefficient, Prediction, RSquare, Cloneable {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractResultRecordWithInfo.class);
+
     protected R record;
     protected double[] beta = new double[0];
     protected double prediction = Constants.NO_DATA;
@@ -45,6 +49,7 @@ public abstract class AbstractResultRecordWithInfo<R extends Record> implements 
     @Override
     public double beta(int index) {
         if (index < 0 || index >= betaSize()) {
+            logger.error("index of beta is out of range");
             throw new InvalidParamException();
         }
         return beta[index];
@@ -58,6 +63,7 @@ public abstract class AbstractResultRecordWithInfo<R extends Record> implements 
     @Override
     public void setBeta(int index, double beta) {
         if (index < 0 || index >= betaSize()) {
+            logger.error("index of beta is out of range");
             throw new InvalidParamException();
         }
         this.beta[index] = beta;
@@ -66,6 +72,7 @@ public abstract class AbstractResultRecordWithInfo<R extends Record> implements 
     @Override
     public void setBeta(double[] beta) {
         if (beta.length != xSize() + 1) {
+            logger.error("beta size is wrong");
             throw new InvalidParamException();
         }
         this.beta = beta;

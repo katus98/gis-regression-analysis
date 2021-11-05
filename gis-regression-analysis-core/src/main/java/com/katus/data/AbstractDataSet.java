@@ -4,6 +4,8 @@ import com.katus.exception.DataException;
 import com.katus.exception.DataSetConvertException;
 import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -15,6 +17,8 @@ import java.util.List;
  * @version 1.0, 2021-10-08
  */
 public abstract class AbstractDataSet<R extends Record> implements DataSet, Cloneable {
+    private static final Logger logger = LoggerFactory.getLogger(AbstractDataSet.class);
+
     protected List<R> records;
     protected volatile boolean latest = false;
     private volatile INDArray xMatrix, yMatrix, xMatrixT, yMatrixT;
@@ -34,6 +38,7 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
 
     public R getRecord(int index) {
         if (index < 0 || index >= size()) {
+            logger.error("index of record is out of range");
             throw new InvalidParamException();
         }
         return records.get(index);
@@ -46,6 +51,7 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
 
     public R removeRecord(int index) {
         if (index < 0 || index >= size()) {
+            logger.error("index of record is out of range");
             throw new InvalidParamException();
         }
         synchronized (this) {
@@ -143,6 +149,7 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
         try {
             resultRecord = clazz.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
+            logger.error("can not construct the result record class", e);
             throw new DataSetConvertException(e);
         }
         return new AbstractResultDataSet<R, RR>(() -> {
@@ -153,6 +160,7 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
                     rRecord.setBaseRecord(record);
                     list.add(rRecord);
                 } catch (CloneNotSupportedException e) {
+                    logger.error("can not clone result records", e);
                     throw new DataException();
                 }
             }
@@ -173,12 +181,14 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
                         rRecord.setBaseRecord(record);
                         list.add(rRecord);
                     } catch (CloneNotSupportedException e) {
+                        logger.error("can not clone result records", e);
                         throw new DataException();
                     }
                 }
                 return list;
             });
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            logger.error("can not construct the result record class", e);
             throw new DataSetConvertException(e);
         }
     }

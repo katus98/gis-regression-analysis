@@ -1,6 +1,8 @@
 package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 
@@ -9,6 +11,8 @@ import java.util.Objects;
  * @version 1.0, 2021-10-08
  */
 public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long>, Comparable<SimpleIdRecord> {
+    private static final Logger logger = LoggerFactory.getLogger(SimpleIdRecord.class);
+
     protected Long id;
 
     public SimpleIdRecord(String str, String sep) {
@@ -29,6 +33,7 @@ public class SimpleIdRecord extends SimpleRecord implements Recognizable<Long>, 
     public double[] load(String s) {
         String[] items = s.split(SEPARATOR);
         if (items.length < 2) {
+            logger.error("item length is too short");
             throw new InvalidParamException();
         }
         setId(Long.valueOf(items[0]));

@@ -3,6 +3,8 @@ package com.katus.regression.weight;
 import com.katus.data.AbstractDataSet;
 import com.katus.data.SimpleIdGeoRecord;
 import com.katus.exception.InvalidParamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author SUN Katus
@@ -20,10 +22,12 @@ public class GeoWeightCalculator extends WeightCalculator<SimpleIdGeoRecord> {
     }
 
     public static class GeoWeightCalculatorBuilder extends WeightCalculatorBuilder<SimpleIdGeoRecord> {
+        private static final Logger logger = LoggerFactory.getLogger(GeoWeightCalculatorBuilder.class);
 
         @Override
         public GeoWeightCalculator build() {
             if (!check()) {
+                logger.error("geo weight calculator params are invalid");
                 throw new InvalidParamException();
             }
             return new GeoWeightCalculator(bandwidthType, weightType, bandwidth, trainingDataSet, weightFunction);
