@@ -2,6 +2,7 @@ package com.katus.regression.linear;
 
 import com.katus.data.AbstractDataSet;
 import com.katus.data.AbstractResultDataSet;
+import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.Record;
 import com.katus.exception.DataException;
 import com.katus.exception.InvalidParamException;
@@ -16,12 +17,12 @@ import java.util.concurrent.Executors;
  * @author SUN Katus
  * @version 1.0, 2021-10-08
  */
-public class WeightedRegression<R extends Record> extends AbstractLinearRegression<R> {
+public class WeightedRegression<R extends Record, RR extends AbstractResultRecordWithInfo<R>> extends AbstractLinearRegression<R, RR> {
     protected final WeightCalculator<R> weightCalculator;
     protected final int numThread;
     private volatile boolean trained = false, predicted = false;
 
-    protected WeightedRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R> predictDataSet, WeightCalculator<R> weightCalculator, int numThread) {
+    protected WeightedRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> predictDataSet, WeightCalculator<R> weightCalculator, int numThread) {
         super(trainingDataSet, predictDataSet);
         this.weightCalculator = weightCalculator;
         this.numThread = Math.min(predictDataSet.size(), numThread);
@@ -93,7 +94,11 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
             for (int i = start; i < end; i++) {
                 INDArray weightMatrix = weightCalculator.calWeightMatrix(predictDataSet.getRecord(i).getBaseRecord());
                 INDArray temp = trainingDataSet.xMatrixT().mmul(weightMatrix);
-                INDArray p1 = InvertMatrix.invert(temp.mmul(trainingDataSet.xMatrix()), true);
+                INDArray temp1 = temp.mmul(trainingDataSet.xMatrix());
+                for (int j = 0; j < temp1.shape()[0]; j++) {
+                    temp1.putScalar(new int[]{j, j}, temp1.getDouble(j, j) + 0.000001);
+                }
+                INDArray p1 = InvertMatrix.invert(temp1, true);
                 INDArray p2 = temp.mmul(trainingDataSet.yMatrix());
                 INDArray betaMatrix = p1.mmul(p2);
                 predictDataSet.setBetaMatrix(i, betaMatrix);
@@ -117,13 +122,13 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
         }
     }
 
-    public static class WeightedRegressionBuilder<R extends Record> {
+    public static class WeightedRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
         private AbstractDataSet<R> trainingDataSet;
-        private AbstractResultDataSet<R> predictDataSet;
+        private AbstractResultDataSet<R, RR> predictDataSet;
         private WeightCalculator<R> weightCalculator;
         private int numThread = Runtime.getRuntime().availableProcessors() / 2 + 1;
 
-        public WeightedRegression<R> build() {
+        public WeightedRegression<R, RR> build() {
             if (predictDataSet == null || weightCalculator == null || numThread < 1) {
                 throw new InvalidParamException();
             }
@@ -133,22 +138,22 @@ public class WeightedRegression<R extends Record> extends AbstractLinearRegressi
             return new WeightedRegression<>(trainingDataSet, predictDataSet, weightCalculator, numThread);
         }
 
-        public WeightedRegressionBuilder<R> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
+        public WeightedRegressionBuilder<R, RR> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
             this.trainingDataSet = trainingDataSet;
             return this;
         }
 
-        public WeightedRegressionBuilder<R> predictDataSet(AbstractResultDataSet<R> predictDataSet) {
+        public WeightedRegressionBuilder<R, RR> predictDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
             this.predictDataSet = predictDataSet;
             return this;
         }
 
-        public WeightedRegressionBuilder<R> weightCalculator(WeightCalculator<R> weightCalculator) {
+        public WeightedRegressionBuilder<R, RR> weightCalculator(WeightCalculator<R> weightCalculator) {
             this.weightCalculator = weightCalculator;
             return this;
         }
 
-        public WeightedRegressionBuilder<R> numThread(int numThread) {
+        public WeightedRegressionBuilder<R, RR> numThread(int numThread) {
             this.numThread = numThread;
             return this;
         }

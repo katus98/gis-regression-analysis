@@ -5,6 +5,7 @@ import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.AbstractResultDataSet;
 import com.katus.data.Record;
 import com.katus.exception.DataException;
+import com.katus.exception.DataSetConvertException;
 import com.katus.exception.InvalidParamException;
 import com.katus.regression.linear.AbstractLinearRegression;
 import com.katus.regression.linear.MultipleLinearRegression;
@@ -18,19 +19,21 @@ import java.util.Random;
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public class AIC<R extends Record> implements Test {
+public class AIC<R extends Record, RR extends AbstractResultRecordWithInfo<R>> implements Test {
     private final AbstractDataSet<R> testDataSet;
-    private final LinearRegressionBuilder<R> linearRegressionBuilder;
+    private final LinearRegressionBuilder<R, RR> linearRegressionBuilder;
     private final double trainingRatio;
     private final double[] bandwidths;
+    private final Class<RR> clazz;
     private final Map<Double, Double> resultMap;
     private volatile boolean test = false;
 
-    private AIC(AbstractDataSet<R> testDataSet, LinearRegressionBuilder<R> linearRegressionBuilder, double trainingRatio, double[] bandwidths) {
+    private AIC(AbstractDataSet<R> testDataSet, LinearRegressionBuilder<R, RR> linearRegressionBuilder, double trainingRatio, double[] bandwidths, Class<RR> clazz) {
         this.testDataSet = testDataSet;
         this.linearRegressionBuilder = linearRegressionBuilder;
         this.trainingRatio = trainingRatio;
         this.bandwidths = bandwidths;
+        this.clazz = clazz;
         this.resultMap = new LinkedHashMap<>();
     }
 
@@ -39,10 +42,10 @@ public class AIC<R extends Record> implements Test {
         return resultMap;
     }
 
-    private double aic(AbstractResultDataSet<R> resultDataSet) {
+    private double aic(AbstractResultDataSet<R, RR> resultDataSet) {
         double squareSum = 0.0;
         for (int i = 0; i < resultDataSet.size(); i++) {
-            AbstractResultRecordWithInfo<R> record = resultDataSet.getRecord(i);
+            RR record = resultDataSet.getRecord(i);
             double predictValue = record.prediction();
             double trueValue = record.y();
             squareSum += Math.pow(predictValue - trueValue, 2);
@@ -77,11 +80,16 @@ public class AIC<R extends Record> implements Test {
                         }
                     }
                     for (double bandwidth : bandwidths) {
-                        AbstractLinearRegression<R> regression = linearRegressionBuilder.build(trainingDataSet, predictDataSet.convertToResultDataSet(), bandwidth);
-                        AbstractResultDataSet<R> resultDataSet = regression.getResultDataSet();
-                        resultMap.put(bandwidth, aic(resultDataSet));
-                        if (regression instanceof MultipleLinearRegression) {
-                            break;
+                        AbstractLinearRegression<R, RR> regression;
+                        try {
+                            regression = linearRegressionBuilder.build(trainingDataSet, predictDataSet.convertToResultDataSet(clazz), bandwidth);
+                            AbstractResultDataSet<R, RR> resultDataSet = regression.getResultDataSet();
+                            resultMap.put(bandwidth, aic(resultDataSet));
+                            if (regression instanceof MultipleLinearRegression) {
+                                break;
+                            }
+                        } catch (DataSetConvertException e) {
+                            resultMap.put(bandwidth, -1.0);
                         }
                     }
                     this.test = true;
@@ -96,40 +104,46 @@ public class AIC<R extends Record> implements Test {
         return true;
     }
 
-    public static class AICBuilder<R extends Record> {
+    public static class AICBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
         private AbstractDataSet<R> testDataSet;
-        private LinearRegressionBuilder<R> linearRegressionBuilder;
+        private LinearRegressionBuilder<R, RR> linearRegressionBuilder;
         private double trainingRatio = 0.7;
         private double[] bandwidths = new double[0];
+        private Class<RR> clazz;
 
-        public AIC<R> build() {
+        public AIC<R, RR> build() {
             if (!check()) {
                 throw new InvalidParamException();
             }
-            return new AIC<>(testDataSet, linearRegressionBuilder, trainingRatio, bandwidths);
+            return new AIC<>(testDataSet, linearRegressionBuilder, trainingRatio, bandwidths, clazz);
         }
 
         public boolean check() {
             return testDataSet != null && linearRegressionBuilder != null && trainingRatio > 0 && trainingRatio < 1 && bandwidths.length > 0;
         }
 
-        public AICBuilder<R> testDataSet(AbstractDataSet<R> testDataSet) {
+        public AICBuilder<R, RR> testDataSet(AbstractDataSet<R> testDataSet) {
             this.testDataSet = testDataSet;
             return this;
         }
 
-        public AICBuilder<R> linearRegressionBuilder(LinearRegressionBuilder<R> linearRegressionBuilder) {
+        public AICBuilder<R, RR> linearRegressionBuilder(LinearRegressionBuilder<R, RR> linearRegressionBuilder) {
             this.linearRegressionBuilder = linearRegressionBuilder;
             return this;
         }
 
-        public AICBuilder<R> trainingRatio(double trainingRatio) {
+        public AICBuilder<R, RR> trainingRatio(double trainingRatio) {
             this.trainingRatio = trainingRatio;
             return this;
         }
 
-        public AICBuilder<R> bandwidths(double... bandwidths) {
+        public AICBuilder<R, RR> bandwidths(double... bandwidths) {
             this.bandwidths = bandwidths;
+            return this;
+        }
+
+        public AICBuilder<R, RR> clazz(Class<RR> clazz) {
+            this.clazz = clazz;
             return this;
         }
     }

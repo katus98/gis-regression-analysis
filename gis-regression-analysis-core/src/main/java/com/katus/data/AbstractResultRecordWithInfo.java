@@ -2,15 +2,19 @@ package com.katus.data;
 
 import com.katus.exception.InvalidParamException;
 
+import java.util.Arrays;
+
 /**
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class AbstractResultRecordWithInfo<R extends Record> implements Record, Coefficient, Prediction, RSquare {
+public abstract class AbstractResultRecordWithInfo<R extends Record> implements Record, Coefficient, Prediction, RSquare, Cloneable {
     protected R record;
-    protected double[] beta;
+    protected double[] beta = new double[0];
     protected double prediction = Constants.NO_DATA;
     protected double rSquare = Constants.NO_DATA;
+
+    public abstract String put();
 
     public void predict() {
         double pre = beta(0);
@@ -23,6 +27,10 @@ public abstract class AbstractResultRecordWithInfo<R extends Record> implements 
     public void predict(double[] beta) {
         setBeta(beta);
         predict();
+    }
+
+    public void setBaseRecord(R record) {
+        this.record = record;
     }
 
     public R getBaseRecord() {
@@ -91,5 +99,13 @@ public abstract class AbstractResultRecordWithInfo<R extends Record> implements 
     @Override
     public void setRSquare(double rSquare) {
         this.rSquare = rSquare;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public AbstractResultRecordWithInfo<R> clone() throws CloneNotSupportedException {
+        AbstractResultRecordWithInfo<R> clone = (AbstractResultRecordWithInfo<R>) super.clone();
+        clone.beta = Arrays.copyOf(beta(), betaSize());
+        return clone;
     }
 }

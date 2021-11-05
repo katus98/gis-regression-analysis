@@ -2,6 +2,7 @@ package com.katus.regression.linear;
 
 import com.katus.data.AbstractDataSet;
 import com.katus.data.AbstractResultDataSet;
+import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.Record;
 import com.katus.regression.Regression;
 
@@ -12,16 +13,16 @@ import java.util.concurrent.TimeUnit;
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class AbstractLinearRegression<R extends Record> implements Regression {
+public abstract class AbstractLinearRegression<R extends Record, RR extends AbstractResultRecordWithInfo<R>> implements Regression {
     protected final AbstractDataSet<R> trainingDataSet;
-    protected final AbstractResultDataSet<R> predictDataSet;
+    protected final AbstractResultDataSet<R, RR> predictDataSet;
 
-    protected AbstractLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R> predictDataSet) {
+    protected AbstractLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> predictDataSet) {
         this.trainingDataSet = trainingDataSet;
         this.predictDataSet = predictDataSet;
     }
 
-    public AbstractResultDataSet<R> getResultDataSet() {
+    public AbstractResultDataSet<R, RR> getResultDataSet() {
         train();
         predict();
         return predictDataSet;

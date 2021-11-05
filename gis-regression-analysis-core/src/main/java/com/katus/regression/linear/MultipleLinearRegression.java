@@ -2,6 +2,7 @@ package com.katus.regression.linear;
 
 import com.katus.data.AbstractDataSet;
 import com.katus.data.AbstractResultDataSet;
+import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.Record;
 import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -14,12 +15,12 @@ import java.util.concurrent.Executors;
  * @author SUN Katus
  * @version 1.0, 2021-09-30
  */
-public class MultipleLinearRegression<R extends Record> extends AbstractLinearRegression<R> {
+public class MultipleLinearRegression<R extends Record, RR extends AbstractResultRecordWithInfo<R>> extends AbstractLinearRegression<R, RR> {
     protected final int numThread;
     private volatile INDArray betaMatrix;
     private volatile boolean predicted = false;
 
-    protected MultipleLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R> predictDataSet, int numThread) {
+    protected MultipleLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> predictDataSet, int numThread) {
         super(trainingDataSet, predictDataSet);
         this.numThread = Math.min(predictDataSet.size(), numThread);
     }
@@ -83,12 +84,12 @@ public class MultipleLinearRegression<R extends Record> extends AbstractLinearRe
         }
     }
 
-    public static class MultipleLinearRegressionBuilder<R extends Record> {
+    public static class MultipleLinearRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
         private AbstractDataSet<R> trainingDataSet;
-        private AbstractResultDataSet<R> predictDataSet;
+        private AbstractResultDataSet<R, RR> predictDataSet;
         private int numThread = 1;
 
-        public MultipleLinearRegression<R> build() {
+        public MultipleLinearRegression<R, RR> build() {
             if (predictDataSet == null) {
                 throw new InvalidParamException();
             }
@@ -98,17 +99,17 @@ public class MultipleLinearRegression<R extends Record> extends AbstractLinearRe
             return new MultipleLinearRegression<>(trainingDataSet, predictDataSet, numThread);
         }
 
-        public MultipleLinearRegressionBuilder<R> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
+        public MultipleLinearRegressionBuilder<R, RR> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
             this.trainingDataSet = trainingDataSet;
             return this;
         }
 
-        public MultipleLinearRegressionBuilder<R> predictDataSet(AbstractResultDataSet<R> predictDataSet) {
+        public MultipleLinearRegressionBuilder<R, RR> predictDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
             this.predictDataSet = predictDataSet;
             return this;
         }
 
-        public MultipleLinearRegressionBuilder<R> numThread(int numThread) {
+        public MultipleLinearRegressionBuilder<R, RR> numThread(int numThread) {
             this.numThread = numThread;
             return this;
         }

@@ -1,8 +1,12 @@
 package com.katus.data;
 
+import com.katus.exception.DataException;
+import com.katus.exception.DataSetConvertException;
 import com.katus.exception.InvalidParamException;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -133,18 +137,49 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
         return clone;
     }
 
-    public AbstractResultDataSet<R> convertToResultDataSet() {
-        class TempResultRecordWithInfo extends AbstractResultRecordWithInfo<R> {
-            public TempResultRecordWithInfo(R record) {
-                this.record = record;
-            }
+    @SuppressWarnings("unchecked")
+    public <RR extends AbstractResultRecordWithInfo<R>> AbstractResultDataSet<R, RR> convertToResultDataSet(Class<RR> clazz) throws DataSetConvertException {
+        RR resultRecord;
+        try {
+            resultRecord = clazz.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new DataSetConvertException(e);
         }
-        return new AbstractResultDataSet<R>(() -> {
-            List<AbstractResultRecordWithInfo<R>> list = new ArrayList<>();
+        return new AbstractResultDataSet<R, RR>(() -> {
+            List<RR> list = new ArrayList<>();
             for (R record : records) {
-                list.add(new TempResultRecordWithInfo(record));
+                try {
+                    RR rRecord = (RR) resultRecord.clone();
+                    rRecord.setBaseRecord(record);
+                    list.add(rRecord);
+                } catch (CloneNotSupportedException e) {
+                    throw new DataException();
+                }
             }
             return list;
         }) {};
+    }
+
+    @SuppressWarnings("unchecked")
+    public <RR extends AbstractResultRecordWithInfo<R>, RDS extends AbstractResultDataSet<R, RR>> RDS convertToResultDataSet(Class<RR> rrClass, Class<RDS> rdsClass) throws DataSetConvertException {
+        try {
+            RR resultRecord = rrClass.newInstance();
+            Constructor<RDS> constructor = rdsClass.getConstructor(DataSetInput.class);
+            return constructor.newInstance((DataSetInput<RR>) () -> {
+                List<RR> list = new ArrayList<>();
+                for (R record : records) {
+                    try {
+                        RR rRecord = (RR) resultRecord.clone();
+                        rRecord.setBaseRecord(record);
+                        list.add(rRecord);
+                    } catch (CloneNotSupportedException e) {
+                        throw new DataException();
+                    }
+                }
+                return list;
+            });
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new DataSetConvertException(e);
+        }
     }
 }

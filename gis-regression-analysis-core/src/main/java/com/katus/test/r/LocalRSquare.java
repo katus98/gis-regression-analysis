@@ -10,15 +10,15 @@ import com.katus.test.Test;
  * @author SUN Katus
  * @version 1.0, 2021-10-10
  */
-public class LocalRSquare<R extends Record> implements Test {
-    private final WeightedRegression<R> weightedRegression;
+public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithInfo<R>> implements Test {
+    private final WeightedRegression<R, RR> weightedRegression;
     private final AbstractDataSet<R> trainingDataSet;
-    private final AbstractResultDataSet<R> resultDataSet;
+    private final AbstractResultDataSet<R, RR> resultDataSet;
     private final WeightCalculator<R> weightCalculator;
     private volatile boolean test = false;
 
-    private LocalRSquare(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R> resultDataSet, WeightCalculator<R> weightCalculator, int numThread) {
-        WeightedRegression.WeightedRegressionBuilder<R> builder = new WeightedRegression.WeightedRegressionBuilder<>();
+    private LocalRSquare(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> resultDataSet, WeightCalculator<R> weightCalculator, int numThread) {
+        WeightedRegression.WeightedRegressionBuilder<R, RR> builder = new WeightedRegression.WeightedRegressionBuilder<>();
         this.weightedRegression = builder
                 .trainingDataSet(trainingDataSet)
                 .predictDataSet(resultDataSet)
@@ -75,13 +75,13 @@ public class LocalRSquare<R extends Record> implements Test {
         return test;
     }
 
-    public static class LocalRSquareBuilder<R extends Record> {
+    public static class LocalRSquareBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
         private AbstractDataSet<R> trainingDataSet;
-        private AbstractResultDataSet<R> predictDataSet;
+        private AbstractResultDataSet<R, RR> predictDataSet;
         private WeightCalculator<R> weightCalculator;
         private int numThread = Runtime.getRuntime().availableProcessors() / 2 + 1;
 
-        public LocalRSquare<R> build() {
+        public LocalRSquare<R, RR> build() {
             if (predictDataSet == null || weightCalculator == null || numThread < 1) {
                 throw new InvalidParamException();
             }
@@ -91,22 +91,22 @@ public class LocalRSquare<R extends Record> implements Test {
             return new LocalRSquare<>(trainingDataSet, predictDataSet, weightCalculator, numThread);
         }
 
-        public LocalRSquareBuilder<R> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
+        public LocalRSquareBuilder<R, RR> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
             this.trainingDataSet = trainingDataSet;
             return this;
         }
 
-        public LocalRSquareBuilder<R> predictDataSet(AbstractResultDataSet<R> predictDataSet) {
+        public LocalRSquareBuilder<R, RR> predictDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
             this.predictDataSet = predictDataSet;
             return this;
         }
 
-        public LocalRSquareBuilder<R> weightCalculator(WeightCalculator<R> weightCalculator) {
+        public LocalRSquareBuilder<R, RR> weightCalculator(WeightCalculator<R> weightCalculator) {
             this.weightCalculator = weightCalculator;
             return this;
         }
 
-        public LocalRSquareBuilder<R> numThread(int numThread) {
+        public LocalRSquareBuilder<R, RR> numThread(int numThread) {
             this.numThread = numThread;
             return this;
         }

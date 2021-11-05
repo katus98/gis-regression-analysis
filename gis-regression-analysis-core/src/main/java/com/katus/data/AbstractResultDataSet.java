@@ -11,9 +11,9 @@ import java.util.List;
  * @author SUN Katus
  * @version 1.0, 2021-10-09
  */
-public abstract class AbstractResultDataSet<R extends Record> extends AbstractDataSet<AbstractResultRecordWithInfo<R>> {
+public abstract class AbstractResultDataSet<R extends Record, RR extends AbstractResultRecordWithInfo<R>> extends AbstractDataSet<RR> {
 
-    protected AbstractResultDataSet(DataSetInput<AbstractResultRecordWithInfo<R>> loader) {
+    protected AbstractResultDataSet(DataSetInput<RR> loader) {
         super(loader);
     }
 
@@ -22,7 +22,7 @@ public abstract class AbstractResultDataSet<R extends Record> extends AbstractDa
     }
 
     public void setBetaMatrix(int index, INDArray betaMatrix) {
-        if (betaMatrix.shape()[0] != 1L || betaMatrix.shape()[2] != xSize() + 1) {
+        if (betaMatrix.shape()[1] != 1L || betaMatrix.shape()[0] != xSize() + 1) {
             throw new InvalidParamException();
         }
         double[] beta = new double[xSize() + 1];
@@ -33,8 +33,8 @@ public abstract class AbstractResultDataSet<R extends Record> extends AbstractDa
     }
 
     @Override
-    public AbstractResultDataSet<R> clone() throws CloneNotSupportedException {
-        return (AbstractResultDataSet<R>) super.clone();
+    public AbstractResultDataSet<R, RR> clone() throws CloneNotSupportedException {
+        return (AbstractResultDataSet<R, RR>) super.clone();
     }
 
     public AbstractDataSet<R> convertToSourceDataSet() {
