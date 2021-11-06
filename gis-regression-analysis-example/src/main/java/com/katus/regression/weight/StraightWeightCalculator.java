@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @version 1.0, 2021-11-05
  */
 public class StraightWeightCalculator extends WeightCalculator<HaiNingRecord> {
+
     protected StraightWeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<HaiNingRecord> trainingDataSet, WeightFunction weightFunction) {
         super(bandwidthType, weightType, bandwidth, trainingDataSet, weightFunction);
     }
@@ -28,12 +29,42 @@ public class StraightWeightCalculator extends WeightCalculator<HaiNingRecord> {
     public static class StraightWeightCalculatorBuilder extends WeightCalculatorBuilder<HaiNingRecord> {
 
         @Override
-        public WeightCalculator<HaiNingRecord> build() {
+        public StraightWeightCalculator build() {
             if (!check()) {
                 log.error("straight weight calculator params are invalid");
                 throw new InvalidParamException();
             }
             return new StraightWeightCalculator(bandwidthType, weightType, bandwidth, trainingDataSet, weightFunction);
+        }
+
+        @Override
+        public StraightWeightCalculatorBuilder bandwidthType(BandwidthType bandwidthType) {
+            this.bandwidthType = bandwidthType;
+            return this;
+        }
+
+        @Override
+        public StraightWeightCalculatorBuilder weightType(WeightType weightType) {
+            this.weightType = weightType;
+            return this;
+        }
+
+        @Override
+        public StraightWeightCalculatorBuilder bandwidth(double bandwidth) {
+            this.bandwidth = bandwidth;
+            return this;
+        }
+
+        @Override
+        public StraightWeightCalculatorBuilder trainingDataSet(AbstractDataSet<HaiNingRecord> trainingDataSet) {
+            this.trainingDataSet = trainingDataSet;
+            return this;
+        }
+
+        @Override
+        public StraightWeightCalculatorBuilder weightFunction(WeightFunction weightFunction) {
+            this.weightFunction = weightFunction;
+            return this;
         }
     }
 }

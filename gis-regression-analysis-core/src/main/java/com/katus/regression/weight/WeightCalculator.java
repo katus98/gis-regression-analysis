@@ -107,7 +107,7 @@ public abstract class WeightCalculator<R extends Record> implements Cloneable {
         return band;
     }
 
-    private void initDistances(R r1) {
+    protected void initDistances(R r1) {
         this.distances = new HashMap<>();
         for (int i = 0; i < trainingDataSet.size(); i++) {
             R record = trainingDataSet.getRecord(i);
