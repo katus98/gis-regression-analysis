@@ -1,10 +1,12 @@
 package com.katus.data;
 
+import com.katus.test.r.TrainedRecordJudgement;
+
 /**
  * @author SUN Katus
  * @version 1.0, 2021-11-04
  */
-public class HaiNingResultRecord extends AbstractResultRecordWithInfo<HaiNingRecord> {
+public class HaiNingResultRecord extends AbstractResultRecordWithInfo<HaiNingRecord> implements TrainedRecordJudgement<HaiNingResultRecord> {
     @Override
     public String put() {
         StringBuilder builder = new StringBuilder();
@@ -23,5 +25,10 @@ public class HaiNingResultRecord extends AbstractResultRecordWithInfo<HaiNingRec
     @Override
     public HaiNingResultRecord clone() throws CloneNotSupportedException {
         return (HaiNingResultRecord) super.clone();
+    }
+
+    @Override
+    public boolean isTrained(HaiNingResultRecord record) {
+        return record.getBaseRecord().getId() % 3 == 1;
     }
 }
