@@ -34,6 +34,7 @@ public class GlobalRSquare implements Test {
                     for (double predictValue : predictValues) {
                         result += Math.pow(predictValue - avg, 2);
                     }
+                    result /= predictValues.length;
                     this.r2 = result / s2;
                 }
             }

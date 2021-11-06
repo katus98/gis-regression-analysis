@@ -19,6 +19,8 @@ import java.util.concurrent.Executors;
  * @version 1.0, 2021-09-30
  */
 public class MultipleLinearRegression<R extends Record, RR extends AbstractResultRecordWithInfo<R>> extends AbstractLinearRegression<R, RR> {
+    private static final Logger logger = LoggerFactory.getLogger(MultipleLinearRegression.class);
+
     protected final int numThread;
     private volatile INDArray betaMatrix;
     private volatile boolean predicted = false;
@@ -36,6 +38,9 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
                     INDArray p1 = InvertMatrix.invert(trainingDataSet.xMatrixT().mmul(trainingDataSet.xMatrix()), true);
                     INDArray p2 = trainingDataSet.xMatrixT().mmul(trainingDataSet.yMatrix());
                     this.betaMatrix = p1.mmul(p2);
+                    for (int i = 0; i < resultDataSet.size(); i++) {
+                        resultDataSet.setBetaMatrix(i, betaMatrix);
+                    }
                 }
             }
         }
@@ -83,7 +88,9 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
         public void run() {
             for (int i = start; i < end; i++) {
                 resultDataSet.getRecord(i).predict(beta);
+                logger.trace("Predicting Thread {}-{}: index {} is over", start, end, i);
             }
+            logger.debug("Predicting Thread {}-{} is over", start, end);
         }
     }
 

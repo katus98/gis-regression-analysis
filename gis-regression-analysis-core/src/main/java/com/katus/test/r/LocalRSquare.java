@@ -112,7 +112,9 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
                 }
                 double rSquare = predictRMS / realRMS;
                 resultDataSet.getRecord(i).setRSquare(rSquare);
+                logger.trace("Testing Thread {}-{}: index {} is over", start, end, i);
             }
+            logger.debug("Testing Thread {}-{} is over", start, end);
         }
     }
 

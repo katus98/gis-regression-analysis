@@ -109,7 +109,9 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
                 INDArray p2 = temp.mmul(trainingDataSet.yMatrix());
                 INDArray betaMatrix = p1.mmul(p2);
                 resultDataSet.setBetaMatrix(i, betaMatrix);
+                logger.trace("Training Thread {}-{}: index {} is over", start, end, i);
             }
+            logger.debug("Training Thread {}-{} is over", start, end);
         }
     }
 
@@ -125,7 +127,9 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
         public void run() {
             for (int i = start; i < end; i++) {
                 resultDataSet.getRecord(i).predict();
+                logger.trace("Predicting Thread {}-{}: index {} is over", start, end, i);
             }
+            logger.debug("Predicting Thread {}-{} is over", start, end);
         }
     }
 
