@@ -1,6 +1,7 @@
 package com.katus.regression.weight;
 
 import com.katus.data.AbstractDataSet;
+import com.katus.data.Constants;
 import com.katus.data.Record;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
@@ -21,6 +22,7 @@ public abstract class WeightCalculator<R extends Record> implements Cloneable {
     protected final AbstractDataSet<R> trainingDataSet;
     protected final WeightFunction weightFunction;
     protected Map<R, Double> distances = null;
+    protected double realBand = Constants.NO_DATA;
 
     protected WeightCalculator(BandwidthType bandwidthType, WeightType weightType, double bandwidth, AbstractDataSet<R> trainingDataSet, WeightFunction weightFunction) {
         this.bandwidthType = bandwidthType;
@@ -30,23 +32,25 @@ public abstract class WeightCalculator<R extends Record> implements Cloneable {
         this.weightFunction = weightFunction;
     }
 
-    public INDArray calWeightMatrix(R r1) {
+    public final INDArray calWeightMatrix(R r1) {
         initDistances(r1);
         INDArray matrix = Nd4j.eye(trainingDataSet.size());
         for (int i = 0; i < trainingDataSet.size(); i++) {
             R r2 = trainingDataSet.getRecord(i);
             matrix.putScalar(new int[]{i, i}, calWeight(r2));
         }
+        reset();
         return matrix;
     }
 
-    public boolean[] calBoolArray(R r1) {
+    public final boolean[] calBoolArray(R r1) {
         initDistances(r1);
         boolean[] array = new boolean[trainingDataSet.size()];
         for (int i = 0; i < trainingDataSet.size(); i++) {
             R r2 = trainingDataSet.getRecord(i);
             array[i] = withInBandwidth(r2);
         }
+        reset();
         return array;
     }
 
@@ -83,28 +87,34 @@ public abstract class WeightCalculator<R extends Record> implements Cloneable {
     }
 
     private double getBandwidth() {
-        double band = 0.0;
-        switch (bandwidthType) {
-            case FIXED:
-                band = bandwidth;
-                break;
-            case ADAPTIVE:
-                if (distances.size() <= bandwidth) {
-                    band = Double.MAX_VALUE;
-                } else {
-                    int i = 0;
-                    for (Map.Entry<R, Double> entry : distances.entrySet()) {
-                        if (++i >= Math.round(bandwidth)) {
-                            band = entry.getValue();
-                            break;
+        if (realBand < 0) {
+            switch (bandwidthType) {
+                case FIXED:
+                    this.realBand = bandwidth;
+                    break;
+                case ADAPTIVE:
+                    if (distances.size() <= bandwidth) {
+                        this.realBand = Double.MAX_VALUE;
+                    } else {
+                        int i = 0;
+                        for (Map.Entry<R, Double> entry : distances.entrySet()) {
+                            if (++i >= Math.round(bandwidth)) {
+                                this.realBand = entry.getValue();
+                                break;
+                            }
                         }
                     }
-                }
-                break;
-            default:
-                band = Double.MAX_VALUE;
+                    break;
+                default:
+                    this.realBand = Double.MAX_VALUE;
+            }
         }
-        return band;
+        return realBand;
+    }
+
+    private void reset() {
+        this.distances = null;
+        this.realBand = Constants.NO_DATA;
     }
 
     protected void initDistances(R r1) {
@@ -117,6 +127,10 @@ public abstract class WeightCalculator<R extends Record> implements Cloneable {
                 .stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
+    }
+
+    public AbstractDataSet<R> getTrainingDataSet() {
+        return trainingDataSet;
     }
 
     @Override

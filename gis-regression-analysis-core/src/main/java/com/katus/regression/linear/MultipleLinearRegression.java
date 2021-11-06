@@ -5,6 +5,7 @@ import com.katus.data.AbstractResultDataSet;
 import com.katus.data.AbstractResultRecordWithInfo;
 import com.katus.data.Record;
 import com.katus.exception.InvalidParamException;
+import com.katus.util.ExecutorManager;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.inverse.InvertMatrix;
 import org.slf4j.Logger;
@@ -22,9 +23,9 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
     private volatile INDArray betaMatrix;
     private volatile boolean predicted = false;
 
-    protected MultipleLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> predictDataSet, int numThread) {
-        super(trainingDataSet, predictDataSet);
-        this.numThread = Math.min(predictDataSet.size(), numThread);
+    protected MultipleLinearRegression(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> resultDataSet, int numThread) {
+        super(trainingDataSet, resultDataSet);
+        this.numThread = Math.min(resultDataSet.size(), numThread);
     }
 
     @Override
@@ -51,17 +52,17 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
                         beta[i] = betaMatrix.getDouble(i, 0);
                     }
                     ExecutorService executorService = Executors.newFixedThreadPool(numThread);
-                    int interval = predictDataSet.size() / numThread, start, end = 0;
+                    int interval = resultDataSet.size() / numThread, start, end = 0;
                     for (int i = 0; i < numThread; i++) {
                         start = end;
                         if (i == numThread - 1) {
-                            end = predictDataSet.size();
+                            end = resultDataSet.size();
                         } else {
                             end += interval;
                         }
                         executorService.submit(this.new MultipleLinearRegressionPredictor(start, end, beta));
                     }
-                    waitingForFinish(executorService, "Predicting");
+                    ExecutorManager.waitingForFinish(executorService, "Predicting");
                     this.predicted = true;
                 }
             }
@@ -81,7 +82,7 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
         @Override
         public void run() {
             for (int i = start; i < end; i++) {
-                predictDataSet.getRecord(i).predict(beta);
+                resultDataSet.getRecord(i).predict(beta);
             }
         }
     }
@@ -90,18 +91,18 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
         private static final Logger logger = LoggerFactory.getLogger(MultipleLinearRegressionBuilder.class);
 
         private AbstractDataSet<R> trainingDataSet;
-        private AbstractResultDataSet<R, RR> predictDataSet;
+        private AbstractResultDataSet<R, RR> resultDataSet;
         private int numThread = 1;
 
         public MultipleLinearRegression<R, RR> build() {
-            if (predictDataSet == null) {
+            if (resultDataSet == null) {
                 logger.error("multiple linear regression params are invalid");
                 throw new InvalidParamException();
             }
             if (trainingDataSet == null) {
-                this.trainingDataSet = predictDataSet.convertToSourceDataSet();
+                this.trainingDataSet = resultDataSet.convertToSourceDataSet();
             }
-            return new MultipleLinearRegression<>(trainingDataSet, predictDataSet, numThread);
+            return new MultipleLinearRegression<>(trainingDataSet, resultDataSet, numThread);
         }
 
         public MultipleLinearRegressionBuilder<R, RR> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
@@ -109,8 +110,8 @@ public class MultipleLinearRegression<R extends Record, RR extends AbstractResul
             return this;
         }
 
-        public MultipleLinearRegressionBuilder<R, RR> predictDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
-            this.predictDataSet = predictDataSet;
+        public MultipleLinearRegressionBuilder<R, RR> resultDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
+            this.resultDataSet = predictDataSet;
             return this;
         }
 

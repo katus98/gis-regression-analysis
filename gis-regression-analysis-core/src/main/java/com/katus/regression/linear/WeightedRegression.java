@@ -1,12 +1,10 @@
 package com.katus.regression.linear;
 
-import com.katus.data.AbstractDataSet;
-import com.katus.data.AbstractResultDataSet;
-import com.katus.data.AbstractResultRecordWithInfo;
-import com.katus.data.Record;
+import com.katus.data.*;
 import com.katus.exception.DataException;
 import com.katus.exception.InvalidParamException;
 import com.katus.regression.weight.WeightCalculator;
+import com.katus.util.ExecutorManager;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.inverse.InvertMatrix;
 import org.slf4j.Logger;
@@ -38,17 +36,17 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
             synchronized (this) {
                 if (!trained) {
                     ExecutorService executorService = Executors.newFixedThreadPool(numThread);
-                    int interval = predictDataSet.size() / numThread, start, end = 0;
+                    int interval = resultDataSet.size() / numThread, start, end = 0;
                     for (int i = 0; i < numThread; i++) {
                         start = end;
                         if (i == numThread - 1) {
-                            end = predictDataSet.size();
+                            end = resultDataSet.size();
                         } else {
                             end += interval;
                         }
                         executorService.submit(this.new WeightedRegressionTrainer(start, end, weightCalculator));
                     }
-                    waitingForFinish(executorService, "Training");
+                    ExecutorManager.waitingForFinish(executorService, "Training");
                     this.trained = true;
                 }
             }
@@ -62,21 +60,25 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
             synchronized (this) {
                 if (!predicted) {
                     ExecutorService executorService = Executors.newFixedThreadPool(numThread);
-                    int interval = predictDataSet.size() / numThread, start, end = 0;
+                    int interval = resultDataSet.size() / numThread, start, end = 0;
                     for (int i = 0; i < numThread; i++) {
                         start = end;
                         if (i == numThread - 1) {
-                            end = predictDataSet.size();
+                            end = resultDataSet.size();
                         } else {
                             end += interval;
                         }
                         executorService.submit(this.new WeightedRegressionPredictor(start, end));
                     }
-                    waitingForFinish(executorService, "Predicting");
+                    ExecutorManager.waitingForFinish(executorService, "Predicting");
                     this.predicted = true;
                 }
             }
         }
+    }
+
+    public WeightCalculator<R> getWeightCalculator() {
+        return weightCalculator;
     }
 
     public class WeightedRegressionTrainer implements Runnable {
@@ -97,16 +99,16 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
         @Override
         public void run() {
             for (int i = start; i < end; i++) {
-                INDArray weightMatrix = weightCalculator.calWeightMatrix(predictDataSet.getRecord(i).getBaseRecord());
+                INDArray weightMatrix = weightCalculator.calWeightMatrix(resultDataSet.getRecord(i).getBaseRecord());
                 INDArray temp = trainingDataSet.xMatrixT().mmul(weightMatrix);
                 INDArray temp1 = temp.mmul(trainingDataSet.xMatrix());
                 for (int j = 0; j < temp1.shape()[0]; j++) {
-                    temp1.putScalar(new int[]{j, j}, temp1.getDouble(j, j) + 0.000001);
+                    temp1.putScalar(new int[]{j, j}, temp1.getDouble(j, j) + Constants.ALLOW_ERROR);
                 }
                 INDArray p1 = InvertMatrix.invert(temp1, true);
                 INDArray p2 = temp.mmul(trainingDataSet.yMatrix());
                 INDArray betaMatrix = p1.mmul(p2);
-                predictDataSet.setBetaMatrix(i, betaMatrix);
+                resultDataSet.setBetaMatrix(i, betaMatrix);
             }
         }
     }
@@ -122,7 +124,7 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
         @Override
         public void run() {
             for (int i = start; i < end; i++) {
-                predictDataSet.getRecord(i).predict();
+                resultDataSet.getRecord(i).predict();
             }
         }
     }
@@ -130,29 +132,21 @@ public class WeightedRegression<R extends Record, RR extends AbstractResultRecor
     public static class WeightedRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
         private static final Logger logger = LoggerFactory.getLogger(WeightedRegressionBuilder.class);
 
-        private AbstractDataSet<R> trainingDataSet;
-        private AbstractResultDataSet<R, RR> predictDataSet;
+        private AbstractResultDataSet<R, RR> resultDataSet;
         private WeightCalculator<R> weightCalculator;
         private int numThread = Runtime.getRuntime().availableProcessors() / 2 + 1;
 
         public WeightedRegression<R, RR> build() {
-            if (predictDataSet == null || weightCalculator == null || numThread < 1) {
+            AbstractDataSet<R> trainingDataSet = weightCalculator.getTrainingDataSet();
+            if (resultDataSet == null || weightCalculator == null || numThread < 1 || trainingDataSet == null) {
                 logger.error("weighted regression params are invalid");
                 throw new InvalidParamException();
             }
-            if (trainingDataSet == null) {
-                this.trainingDataSet = predictDataSet.convertToSourceDataSet();
-            }
-            return new WeightedRegression<>(trainingDataSet, predictDataSet, weightCalculator, numThread);
+            return new WeightedRegression<>(trainingDataSet, resultDataSet, weightCalculator, numThread);
         }
 
-        public WeightedRegressionBuilder<R, RR> trainingDataSet(AbstractDataSet<R> trainingDataSet) {
-            this.trainingDataSet = trainingDataSet;
-            return this;
-        }
-
-        public WeightedRegressionBuilder<R, RR> predictDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
-            this.predictDataSet = predictDataSet;
+        public WeightedRegressionBuilder<R, RR> resultDataSet(AbstractResultDataSet<R, RR> predictDataSet) {
+            this.resultDataSet = predictDataSet;
             return this;
         }
 

@@ -12,5 +12,5 @@ import com.katus.regression.linear.AbstractLinearRegression;
  */
 public interface LinearRegressionBuilder<R extends Record, RR extends AbstractResultRecordWithInfo<R>> {
 
-    AbstractLinearRegression<R, RR> build(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> predictDataSet, double bandwidth);
+    AbstractLinearRegression<R, RR> build(AbstractDataSet<R> trainingDataSet, AbstractResultDataSet<R, RR> resultDataSet, double bandwidth);
 }

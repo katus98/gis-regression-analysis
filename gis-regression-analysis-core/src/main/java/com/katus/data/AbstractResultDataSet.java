@@ -36,6 +36,14 @@ public abstract class AbstractResultDataSet<R extends Record, RR extends Abstrac
         records.get(index).setBeta(beta);
     }
 
+    public double[] predictions() {
+        double[] predictions = new double[size()];
+        for (int i = 0; i < size(); i++) {
+            predictions[i] = records.get(i).prediction();
+        }
+        return predictions;
+    }
+
     @Override
     public AbstractResultDataSet<R, RR> clone() throws CloneNotSupportedException {
         return (AbstractResultDataSet<R, RR>) super.clone();

@@ -6,4 +6,5 @@ package com.katus.data;
  */
 public final class Constants {
     public static final double NO_DATA = Double.MIN_VALUE;
+    public static final double ALLOW_ERROR = 0.000001;
 }
