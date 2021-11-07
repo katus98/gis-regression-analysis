@@ -3,6 +3,7 @@ package com.katus;
 import com.katus.common.io.FsManipulator;
 import com.katus.common.io.FsManipulatorFactory;
 import com.katus.common.io.LineIterator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @author SUN Katus
  * @version 1.0, 2021-11-01
  */
+@Slf4j
 public class ProcessCost {
     private static final int NUM_THREAD = 16;
     private static final JedisPool JEDIS_POOL;
@@ -36,7 +38,7 @@ public class ProcessCost {
         // 当连接池空了之后, 多久没获取到Jedis对象则超时
         poolConfig.setMaxWaitMillis(-1);
         // 构建连接池时直接指定密码
-        JEDIS_POOL = new JedisPool(poolConfig, "10.79.231.86", 6379, 3000, "skrv587");
+        JEDIS_POOL = new JedisPool(poolConfig, "10.79.231.85", 6379, 3000, "skrv587");
     }
 
     public static void main(String[] args) throws IOException {
@@ -64,6 +66,7 @@ public class ProcessCost {
             costs[originID - 1] = cost;
         }
         lineIterator.close();
+        log.info("data preparation is over");
 
         ExecutorService executorService = Executors.newFixedThreadPool(NUM_THREAD);
         int interval = dataSize / NUM_THREAD, start, end = 0;
@@ -74,20 +77,21 @@ public class ProcessCost {
             } else {
                 end += interval;
             }
-            System.out.println(i + ": " + start + "-" + end);
+            log.info("{}: {}-{}", i, start, end);
             executorService.submit(new RedisInput(JEDIS_POOL.getResource(), costMap, i, start, end));
         }
         executorService.shutdown();
         try {
             while (!executorService.awaitTermination(5, TimeUnit.MINUTES)) {
-                System.out.println("loading...");
+                log.info("redis inputting...");
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        System.out.println("input redis is over!");
+        log.info("input redis is over");
     }
 
+    @Slf4j
     public static class RedisInput implements Runnable {
         private final Jedis jedis;
         private final Map<Integer, double[]> costMap;
@@ -109,8 +113,12 @@ public class ProcessCost {
                 for (double cost : costs) {
                     jedis.rpush("length-" + destinationID, String.valueOf(cost));
                 }
+                if ((i - start + 1) % 20 == 0) {
+                    log.trace("Thread {}-{} finished {} items", start, end, i - start + 1);
+                }
             }
             jedis.close();
+            log.debug("Thread {}-{} is over", start, end);
         }
     }
 }
