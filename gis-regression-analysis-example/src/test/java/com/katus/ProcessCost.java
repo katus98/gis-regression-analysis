@@ -109,9 +109,18 @@ public class ProcessCost {
         public void run() {
             for (int i = start; i < end; i++) {
                 Integer destinationID = i + 1;
-                double[] costs = costMap.get(destinationID);
-                for (double cost : costs) {
-                    jedis.rpush("length-" + destinationID, String.valueOf(cost));
+                String key = "length-" + destinationID;
+                try {
+                    if (jedis.llen(key) != 15274L) {
+                        jedis.del(key);
+                        double[] costs = costMap.get(destinationID);
+                        for (double cost : costs) {
+                            jedis.rpush(key, String.valueOf(cost));
+                        }
+                    }
+                } catch (Exception e) {
+                    log.error("Failed", e);
+                    log.error("Thread {}-{} failed the {} item", start, end, i);
                 }
                 if ((i - start + 1) % 20 == 0) {
                     log.trace("Thread {}-{} finished {} items", start, end, i - start + 1);
