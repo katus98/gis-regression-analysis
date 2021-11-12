@@ -33,7 +33,7 @@ public class AicForLength {
         HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainFilename);
 
         double[] bandwidths = new double[50];
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < bandwidths.length; i++) {
             bandwidths[i] = i + 1;
         }
         AIC<HaiNingRecord, HaiNingResultRecord> aic = new AIC.AICBuilder<HaiNingRecord, HaiNingResultRecord>()
