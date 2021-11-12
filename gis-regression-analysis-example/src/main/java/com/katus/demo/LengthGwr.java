@@ -65,7 +65,6 @@ public class LengthGwr {
 
         LocalRSquare<HaiNingRecord, HaiNingResultRecord> localRSquare = new LocalRSquare.LocalRSquareBuilder<HaiNingRecord, HaiNingResultRecord>()
                 .weightedRegression(regression)
-                .trainedRecordJudgement(new HaiNingResultRecord())
                 .numThread(numThread)
                 .build();
         localRSquare.test();

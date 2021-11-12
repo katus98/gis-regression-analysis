@@ -65,6 +65,10 @@ public abstract class AbstractDataSet<R extends Record> implements DataSet, Clon
         this.latest = false;
     }
 
+    public boolean isTrained(R record) {
+        return records.contains(record);
+    }
+
     @Override
     public double[] yArray() {
         double[] yArray = new double[size()];

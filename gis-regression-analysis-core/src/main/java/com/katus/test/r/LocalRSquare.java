@@ -24,16 +24,14 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
     private final AbstractDataSet<R> trainingDataSet;
     private final AbstractResultDataSet<R, RR> resultDataSet;
     private final WeightCalculator<R> weightCalculator;
-    private final TrainedRecordJudgement<RR> trainedRecordJudgement;
     private final int numThread;
     private volatile boolean test = false;
 
-    private LocalRSquare(WeightedRegression<R, RR> weightedRegression, TrainedRecordJudgement<RR> trainedRecordJudgement, int numThread) {
+    private LocalRSquare(WeightedRegression<R, RR> weightedRegression, int numThread) {
         this.weightedRegression = weightedRegression;
         this.trainingDataSet = weightedRegression.getTrainingDataSet();
         this.resultDataSet = weightedRegression.getResultDataSet();
         this.weightCalculator = weightedRegression.getWeightCalculator();
-        this.trainedRecordJudgement = trainedRecordJudgement;
         this.numThread = numThread;
     }
 
@@ -46,7 +44,7 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
                     double[] predictYs = new double[trainingDataSet.size()];
                     for (int i = 0, j = 0; i < resultDataSet.size(); i++) {
                         RR record = resultDataSet.getRecord(i);
-                        if (trainedRecordJudgement.isTrained(record)) {
+                        if (trainingDataSet.isTrained(record.getBaseRecord())) {
                             predictYs[j++] = record.prediction();
                         }
                     }
@@ -122,25 +120,19 @@ public class LocalRSquare<R extends Record, RR extends AbstractResultRecordWithI
         private static final Logger logger = LoggerFactory.getLogger(LocalRSquareBuilder.class);
 
         private WeightedRegression<R, RR> weightedRegression;
-        private TrainedRecordJudgement<RR> trainedRecordJudgement;
         private int numThread = Runtime.getRuntime().availableProcessors() / 2 + 1;
 
         public LocalRSquare<R, RR> build() {
             if (weightedRegression == null || weightedRegression.getTrainingDataSet() == null || weightedRegression.getResultDataSet() == null
-                    || weightedRegression.getWeightCalculator() == null || trainedRecordJudgement == null || numThread < 1) {
+                    || weightedRegression.getWeightCalculator() == null || numThread < 1) {
                 logger.error("local r params are invalid");
                 throw new InvalidParamException();
             }
-            return new LocalRSquare<>(weightedRegression, trainedRecordJudgement, numThread);
+            return new LocalRSquare<>(weightedRegression, numThread);
         }
 
         public LocalRSquareBuilder<R, RR> weightedRegression(WeightedRegression<R, RR> weightedRegression) {
             this.weightedRegression = weightedRegression;
-            return this;
-        }
-
-        public LocalRSquareBuilder<R, RR> trainedRecordJudgement(TrainedRecordJudgement<RR> trainedRecordJudgement) {
-            this.trainedRecordJudgement = trainedRecordJudgement;
             return this;
         }
 
