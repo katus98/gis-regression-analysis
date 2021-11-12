@@ -50,6 +50,9 @@ public class BasicFunctions {
         resultDataSet.output(list -> {
             List<String> lines = list.stream().map(HaiNingResultRecord::put).collect(Collectors.toList());
             FsManipulator fsManipulator = FsManipulatorFactory.create();
+            lines.add(0, "id,ci,battle,drinks,reverse,signal,car,entertainment,food,traffic,ci_pre," +
+                    "beta_0,beta_battle,beta_drinks,beta_reverse,beta_signal,beta_car,beta_entertainment,beta_food," +
+                    "beta_traffic,r_square,lon_x,lat_y");
             try {
                 fsManipulator.writeTextToFile(filename, lines);
             } catch (IOException e) {
