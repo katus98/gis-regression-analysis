@@ -17,6 +17,21 @@ import java.util.stream.Collectors;
 public class ProcessData {
 
     public static void main(String[] args) throws IOException {
+        prepareAllData(args);
+    }
+
+    /*
+    F:\data\gis\traffic\tables\var_join\join_battle.txt
+    F:\data\gis\traffic\tables\var_join\join_drinks.txt
+    F:\data\gis\traffic\tables\var_join\join_overspeed.txt
+    F:\data\gis\traffic\tables\var_join\join_reverse.txt
+    F:\data\gis\traffic\tables\var_join\join_signal.txt
+    F:\data\gis\traffic\tables\var_join\join_car.txt
+    F:\data\gis\traffic\tables\var_join\join_entertainment.txt
+    F:\data\gis\traffic\tables\var_join\join_food.txt
+    F:\data\gis\traffic\tables\var_join\join_traffic.txt
+     */
+    public static void prepareAllData(String[] paths) throws IOException {
         FsManipulator fsManipulator = FsManipulatorFactory.create();
         List<String> lines = fsManipulator.readToLines("F:\\data\\gis\\traffic\\tables\\var_join\\base.txt");
         List<HaiNingProcessRecord> records = new ArrayList<>(15274);
@@ -24,23 +39,23 @@ public class ProcessData {
             String[] items = line.split(",");
             records.add(new HaiNingProcessRecord(Long.parseLong(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]), 250.0 / Double.parseDouble(items[1])));
         }
-        lines = fsManipulator.readToLines("F:\\data\\gis\\traffic\\tables\\var_join\\join_accident.txt");
+        lines = fsManipulator.readToLines("F:\\data\\gis\\traffic\\tables\\var_join\\join_accident_use.txt");
         for (String line : lines) {
             String[] items = line.split(",");
-            HaiNingProcessRecord record = records.get(Integer.parseInt(items[2]) - 1);
+            HaiNingProcessRecord record = records.get(Integer.parseInt(items[3]) - 1);
             record.setCi(record.getCi() + Double.parseDouble(items[1]));
         }
-        for (String arg : args) {
-            lines = fsManipulator.readToLines(arg);
+        for (String path : paths) {
+            lines = fsManipulator.readToLines(path);
             for (String line : lines) {
                 String[] items = line.split(",");
                 HaiNingProcessRecord record = records.get(Integer.parseInt(items[1]) - 1);
-                record.increase(arg, 1.0);
+                record.increase(path, 1.0);
             }
         }
         for (HaiNingProcessRecord record : records) {
             record.update();
         }
-        fsManipulator.writeTextToFile("F:\\data\\gis\\traffic\\tables\\var_join\\result.csv", records.stream().map(Objects::toString).collect(Collectors.toList()));
+        fsManipulator.writeTextToFile("F:\\data\\gis\\traffic\\tables\\var_join\\result2.csv", records.stream().map(Objects::toString).collect(Collectors.toList()));
     }
 }
