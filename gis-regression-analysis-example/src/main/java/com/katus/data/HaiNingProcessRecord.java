@@ -37,6 +37,24 @@ public class HaiNingProcessRecord implements Record {
         this.factor = factor;
     }
 
+    public HaiNingProcessRecord(String line) {
+        String[] items = line.split(",");
+        this.roadId = Long.parseLong(items[0]);
+        this.ci = Double.parseDouble(items[1]);
+        this.battle = Double.parseDouble(items[2]);
+        this.drinks = Double.parseDouble(items[3]);
+        this.overspeed = Double.parseDouble(items[4]);
+        this.reverse = Double.parseDouble(items[5]);
+        this.signal = Double.parseDouble(items[6]);
+        this.car = Double.parseDouble(items[7]);
+        this.entertainment = Double.parseDouble(items[8]);
+        this.food = Double.parseDouble(items[9]);
+        this.traffic = Double.parseDouble(items[10]);
+        this.lonX = Double.parseDouble(items[11]);
+        this.latY = Double.parseDouble(items[12]);
+        this.factor = Double.parseDouble(items[13]);
+    }
+
     @Override
     public double y() {
         return ci;

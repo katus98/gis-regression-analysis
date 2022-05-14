@@ -39,7 +39,7 @@ public class ProcessData {
             String[] items = line.split(",");
             records.add(new HaiNingProcessRecord(Long.parseLong(items[2]), Double.parseDouble(items[3]), Double.parseDouble(items[4]), 250.0 / Double.parseDouble(items[1])));
         }
-        lines = fsManipulator.readToLines("F:\\data\\gis\\traffic\\tables\\var_join\\join_accident_use.txt");
+        lines = fsManipulator.readToLines("F:\\data\\gis\\traffic\\tables\\var_join\\join_accident_use50.txt");
         for (String line : lines) {
             String[] items = line.split(",");
             HaiNingProcessRecord record = records.get(Integer.parseInt(items[3]) - 1);
@@ -56,6 +56,6 @@ public class ProcessData {
         for (HaiNingProcessRecord record : records) {
             record.update();
         }
-        fsManipulator.writeTextToFile("F:\\data\\gis\\traffic\\tables\\var_join\\result2.csv", records.stream().map(Objects::toString).collect(Collectors.toList()));
+        fsManipulator.writeTextToFile("F:\\data\\gis\\traffic\\tables\\var_join\\all_data50.csv", records.stream().map(Objects::toString).collect(Collectors.toList()));
     }
 }
