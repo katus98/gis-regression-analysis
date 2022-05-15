@@ -29,11 +29,17 @@ public class AicForCost {
         }
         String trainFilename = args[0];
         BandwidthType type = BandwidthType.valueOf(args[1]);
-        int numThread = Integer.parseInt(args[2]);
+        double ratio = Double.parseDouble(args[2]);
+        int numThread = Integer.parseInt(args[3]);
+
+        log.info("--------AIC TEST--------");
+        log.info("DATA: {}", trainFilename);
+        log.info("Bandwidth Type: {}", type);
+        log.info("Test Ratio: {}", ratio);
 
         HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainFilename);
 
-        double[] bandwidths = new double[100];
+        double[] bandwidths = new double[25];
         for (int i = 0; i < bandwidths.length; i++) {
             bandwidths[i] = i + 1;
         }
@@ -58,6 +64,7 @@ public class AicForCost {
                             .numThread(numThread)
                             .build();
                 })
+                .trainingRatio(ratio)
                 .bandwidths(bandwidths)
                 .clazz(HaiNingResultRecord.class)
                 .build();

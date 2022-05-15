@@ -35,6 +35,12 @@ public class CostGwr {
         double bandwidth = Double.parseDouble(args[4]);
         int numThread = Integer.parseInt(args[5]);
 
+        log.info("--------GWR FOR COST--------");
+        log.info("Training Data: {}", trainingFilename);
+        log.info("Predict Data: {}", predictFilename);
+        log.info("Result Data: {}", resultFilename);
+        log.info("Bandwidth: {} {}", type, bandwidth);
+
         HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
         HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
