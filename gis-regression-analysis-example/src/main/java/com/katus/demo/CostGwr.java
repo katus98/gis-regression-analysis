@@ -31,8 +31,9 @@ public class CostGwr {
         String trainingFilename = args[0];
         String predictFilename = args[1];
         String resultFilename = args[2];
-        double bandwidth = Double.parseDouble(args[3]);
-        int numThread = Integer.parseInt(args[4]);
+        BandwidthType type = BandwidthType.valueOf(args[3]);
+        double bandwidth = Double.parseDouble(args[4]);
+        int numThread = Integer.parseInt(args[5]);
 
         HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
         HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
@@ -47,7 +48,7 @@ public class CostGwr {
 
         NetworkCostWeightCalculator weightCalculator = new NetworkCostWeightCalculator.NetworkCostWeightCalculatorBuilder()
                 .jedisPool(jedisPool)
-                .bandwidthType(BandwidthType.ADAPTIVE)
+                .bandwidthType(type)
                 .bandwidth(bandwidth)
                 .trainingDataSet(trainingDataSet)
                 .build();

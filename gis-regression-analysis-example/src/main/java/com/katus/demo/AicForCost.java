@@ -28,11 +28,12 @@ public class AicForCost {
             throw new InvalidParamException();
         }
         String trainFilename = args[0];
-        int numThread = Integer.parseInt(args[1]);
+        BandwidthType type = BandwidthType.valueOf(args[1]);
+        int numThread = Integer.parseInt(args[2]);
 
         HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainFilename);
 
-        double[] bandwidths = new double[50];
+        double[] bandwidths = new double[100];
         for (int i = 0; i < bandwidths.length; i++) {
             bandwidths[i] = i + 1;
         }
@@ -47,7 +48,7 @@ public class AicForCost {
                     JedisPool jedisPool = new JedisPool(poolConfig, "localhost", 6379, 3000, "skrv587");
                     NetworkCostWeightCalculator weightCalculator = new NetworkCostWeightCalculator.NetworkCostWeightCalculatorBuilder()
                             .jedisPool(jedisPool)
-                            .bandwidthType(BandwidthType.ADAPTIVE)
+                            .bandwidthType(type)
                             .trainingDataSet(td)
                             .bandwidth(b)
                             .build();
@@ -64,7 +65,7 @@ public class AicForCost {
         if (aic.pass()) {
             Map<Double, Double> resultMap = aic.getAicResults();
             for (Map.Entry<Double, Double> entry : resultMap.entrySet()) {
-                log.info("{} : {}", entry.getKey(), entry.getValue());
+                log.info("{} {} : {}", type, entry.getKey(), entry.getValue());
             }
         }
     }
