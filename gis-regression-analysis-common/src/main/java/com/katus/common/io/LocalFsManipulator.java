@@ -17,7 +17,8 @@ import java.util.zip.ZipOutputStream;
 public class LocalFsManipulator implements FsManipulator {
     private static LocalFsManipulator INSTANCE;
 
-    private LocalFsManipulator() {}
+    private LocalFsManipulator() {
+    }
 
     static LocalFsManipulator getInstance() {
         if (INSTANCE == null) {
@@ -130,7 +131,7 @@ public class LocalFsManipulator implements FsManipulator {
         } else {
             String[] files = list(path);
             long totalSize = 0;
-            for (String file: files) {
+            for (String file : files) {
                 totalSize += size(file);
             }
             return totalSize;

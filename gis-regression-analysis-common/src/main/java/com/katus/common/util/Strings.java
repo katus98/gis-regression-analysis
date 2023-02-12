@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * 字符串操作类
+ * 字符串工具类
  *
  * @author SUN Katus
  * @version 1.0, 2021-05-31
@@ -55,10 +55,11 @@ public final class Strings {
         return itemList;
     }
 
-    /***
+    /**
      * 去除字符串后缀
-     * @param origin    原始字符串
-     * @param tail      待去除后缀
+     *
+     * @param origin 原始字符串
+     * @param tail   待去除后缀
      * @return 去尾缀字符串
      */
     public static String trimEnd(String origin, String tail) {
@@ -69,10 +70,11 @@ public final class Strings {
         }
     }
 
-    /***
+    /**
      * 去除字符串前缀
-     * @param origin    原始字符串
-     * @param head      待去除前缀
+     *
+     * @param origin 原始字符串
+     * @param head   待去除前缀
      * @return 去首缀字符串
      */
     public static String trimHead(String origin, String head) {
@@ -83,8 +85,9 @@ public final class Strings {
         }
     }
 
-    /***
+    /**
      * 去除字符串前后引用字符
+     *
      * @param origin    原始字符串
      * @param Quotechar 引用字符
      * @return 去引用字符串
@@ -99,9 +102,21 @@ public final class Strings {
 
     /**
      * 生成全局唯一UUID字符串
+     *
      * @return UUID字符串
      */
     public static synchronized String generateUuid() {
         return UUID.randomUUID().toString();
+    }
+
+    /**
+     * 检查字符串是否只包含数字和字母
+     *
+     * @param str 字符串
+     * @return 是否只包含数字和字母
+     */
+    public static boolean allLetterDigit(String str) {
+        String regex = "^[a-z0-9A-Z]+$";
+        return str.matches(regex);
     }
 }

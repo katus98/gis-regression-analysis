@@ -13,7 +13,10 @@ import com.katus.test.r.GlobalRSquare;
 import com.katus.test.r.LocalRSquare;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.time.Duration;
 
 /**
  * @author SUN Katus
@@ -38,11 +41,11 @@ public class LengthGwr {
         HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
 
-        GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
+        GenericObjectPoolConfig<Jedis> poolConfig = new GenericObjectPoolConfig<>();
         poolConfig.setMaxTotal(numThread);
         poolConfig.setMaxIdle(numThread);
         poolConfig.setMinIdle(0);
-        poolConfig.setMaxWaitMillis(-1);
+        poolConfig.setMaxWait(Duration.ofMinutes(1L));
         JedisPool jedisPool = new JedisPool(poolConfig, "localhost", 6379, 3000, "skrv587");
 
         NetworkLengthWeightCalculator weightCalculator = new NetworkLengthWeightCalculator.NetworkLengthWeightCalculatorBuilder()

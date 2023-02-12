@@ -18,6 +18,7 @@ public interface FsManipulator {
 
     /**
      * 文件/目录是否存在
+     *
      * @param path 路径
      * @return 是否存在
      * @throws IOException IO异常
@@ -26,6 +27,7 @@ public interface FsManipulator {
 
     /**
      * 路径是否为文件
+     *
      * @param path 路径
      * @return 是否为文件
      * @throws IOException IO异常
@@ -34,6 +36,7 @@ public interface FsManipulator {
 
     /**
      * 路径是否为目录
+     *
      * @param path 路径
      * @return 是否为目录
      * @throws IOException IO异常
@@ -44,6 +47,7 @@ public interface FsManipulator {
 
     /**
      * 罗列路径下的所有子路径 (单层)
+     *
      * @param path 路径
      * @return 路径数组
      * @throws IOException IO异常
@@ -52,6 +56,7 @@ public interface FsManipulator {
 
     /**
      * 创建目录
+     *
      * @param path 目录路径
      * @return 是否成功
      * @throws IOException IO异常
@@ -60,6 +65,7 @@ public interface FsManipulator {
 
     /**
      * 创建多级目录
+     *
      * @param path 目录路径
      * @return 是否成功
      * @throws IOException IO异常
@@ -68,6 +74,7 @@ public interface FsManipulator {
 
     /**
      * 创建文件
+     *
      * @param path 文件路径
      * @return 是否成功
      * @throws IOException IO异常
@@ -76,6 +83,7 @@ public interface FsManipulator {
 
     /**
      * 级联删除所有路径
+     *
      * @param paths 路径
      * @throws IOException IO异常
      */
@@ -87,6 +95,7 @@ public interface FsManipulator {
 
     /**
      * 级联删除路径
+     *
      * @param path 路径
      * @throws IOException IO异常
      */
@@ -94,6 +103,7 @@ public interface FsManipulator {
 
     /**
      * 获取字节输入流
+     *
      * @param path 路径
      * @return 字节输入流
      * @throws IOException IO异常
@@ -102,7 +112,8 @@ public interface FsManipulator {
 
     /**
      * 获取字符输入流
-     * @param path 路径
+     *
+     * @param path    路径
      * @param charset 字符集
      * @return 字符输入流
      * @throws IOException IO异常
@@ -117,6 +128,7 @@ public interface FsManipulator {
 
     /**
      * 获取字节输出流
+     *
      * @param path 路径
      * @return 字节输出流
      * @throws IOException IO异常
@@ -125,7 +137,8 @@ public interface FsManipulator {
 
     /**
      * 获取字符输出流
-     * @param path 路径
+     *
+     * @param path    路径
      * @param charset 字符输出流
      * @return 字符输出流
      * @throws IOException IO异常
@@ -140,6 +153,7 @@ public interface FsManipulator {
 
     /**
      * 获取追加字节输出流
+     *
      * @param path 路径
      * @return 追加字节输出流
      * @throws IOException IO异常
@@ -148,7 +162,8 @@ public interface FsManipulator {
 
     /**
      * 获取追加字符输出流
-     * @param path 路径
+     *
+     * @param path    路径
      * @param charset 追加字符输出流
      * @return 追加字符输出流
      * @throws IOException IO异常
@@ -163,7 +178,8 @@ public interface FsManipulator {
 
     /**
      * 复制文件
-     * @param src 原始路径
+     *
+     * @param src  原始路径
      * @param dest 新路径
      * @throws IOException IO异常
      */
@@ -175,7 +191,8 @@ public interface FsManipulator {
 
     /**
      * 文件重命名/文件移动
-     * @param src 原路径
+     *
+     * @param src  原路径
      * @param dest 新路径
      * @return 是否成功
      * @throws IOException IO异常
@@ -188,6 +205,7 @@ public interface FsManipulator {
 
     /**
      * 压缩多文件/目录 (默认格式)
+     *
      * @param inputs 多文件/目录路径
      * @param output 压缩文件完整输出路径 (小写扩展名)
      * @throws IOException IO异常
@@ -196,7 +214,8 @@ public interface FsManipulator {
 
     /**
      * 解压文件 (默认格式), 解压后的文件会在输出路径下以目录的形式呈现, 即会在输出路径下新建与原压缩文件名称一致的目录 (不包括扩展名)
-     * @param input 压缩文件完整路径
+     *
+     * @param input     压缩文件完整路径
      * @param outputDir 解压文件输出路径
      * @throws IOException IO异常
      */
@@ -204,12 +223,14 @@ public interface FsManipulator {
 
     /**
      * 获取 Home 目录
+     *
      * @return Home 目录
      */
     String getHomeDirectory();
 
     /**
      * 获取文件/目录的修改时间字符串
+     *
      * @param path 路径
      * @return 时间字符串
      * @throws IOException IO异常
@@ -218,6 +239,7 @@ public interface FsManipulator {
 
     /**
      * 获取文件大小 (单位为字节)
+     *
      * @param path 文件路径
      * @return 如果是目录为目录下所有文件大小之和
      * @throws IOException IO异常
@@ -226,8 +248,9 @@ public interface FsManipulator {
 
     /**
      * 从文件中按行读取文本
-     * @param path 文件路径
-     * @param size 读取行数
+     *
+     * @param path    文件路径
+     * @param size    读取行数
      * @param charset 解码字符集
      * @return 文本列表
      * @throws IOException IO异常
@@ -254,7 +277,8 @@ public interface FsManipulator {
 
     /**
      * 获取文本行迭代器
-     * @param path 文本文件路径
+     *
+     * @param path    文本文件路径
      * @param charset 字符集
      * @return 文本行迭代器
      */
@@ -266,7 +290,8 @@ public interface FsManipulator {
 
     /**
      * 从文件中读取文本
-     * @param path 文件路径
+     *
+     * @param path    文件路径
      * @param charset 解码字符集
      * @return 文本
      * @throws IOException IO异常
@@ -289,7 +314,8 @@ public interface FsManipulator {
 
     /**
      * 将文本写入文件
-     * @param path 文件路径
+     *
+     * @param path    文件路径
      * @param content 内容
      * @param charset 编码字符集
      * @throws IOException IO异常

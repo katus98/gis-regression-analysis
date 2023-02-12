@@ -4,7 +4,8 @@ import com.katus.common.util.Strings;
 import com.trilead.ssh2.Connection;
 import com.trilead.ssh2.Session;
 import com.trilead.ssh2.StreamGobbler;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
@@ -16,8 +17,8 @@ import java.nio.file.Paths;
  * @author HU Linshu, SUN Katus
  * @version 1.0, 2021-05-18
  */
-@Slf4j
 public class SecureShell implements Closeable {
+    private static final Logger logger = LoggerFactory.getLogger(SecureShell.class);
     private static final String ENCODE_SET = "export LC_CTYPE=zh_CN.UTF-8;";
     private static final int CMD_LENGTH_LIMIT = 10000;
     private final Connection connection;
@@ -47,7 +48,7 @@ public class SecureShell implements Closeable {
     public Boolean run(String cmd, String tempShFile) throws IOException {
         Session session = connection.openSession();
         long startTime = System.currentTimeMillis();
-        log.info("Waiting for cmd (length: {}): [{}]", cmd.length(), cmd);
+        logger.info("Waiting for cmd (length: {}): [{}]", cmd.length(), cmd);
         if (cmd.length() > CMD_LENGTH_LIMIT) {
             String tempSh = Paths.get(tempShFile, Strings.generateUuid() + ".sh").toString();
             session.execCommand("rm " + tempSh + ";echo \"" + cmd + ";echo \\$?\"" + " > " + tempSh +
@@ -65,9 +66,9 @@ public class SecureShell implements Closeable {
         }
         Boolean result = sb.toString().endsWith("0\n");
         if (result) {
-            log.info("Cmd[{}] finished, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
+            logger.info("Cmd[{}] finished, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
         } else {
-            log.info("Cmd[{}] failed, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
+            logger.info("Cmd[{}] failed, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
         }
         session.close();
         return result;
@@ -84,7 +85,7 @@ public class SecureShell implements Closeable {
     public String runWithOutput(String cmd, String tempShFile) throws IOException {
         Session session = connection.openSession();
         long startTime = System.currentTimeMillis();
-        log.info("Waiting for cmd (length: {}): [{}]", cmd.length(), cmd);
+        logger.info("Waiting for cmd (length: {}): [{}]", cmd.length(), cmd);
         if (cmd.length() > CMD_LENGTH_LIMIT) {
             String tempSh = Paths.get(tempShFile, Strings.generateUuid() + ".sh").toString();
             session.execCommand("rm " + tempSh + ";echo " + cmd + " > " + tempSh + "&&chmod 777 " + tempSh + "&&" + ENCODE_SET + tempSh);
@@ -98,9 +99,9 @@ public class SecureShell implements Closeable {
                 sb.append(line).append("\n");
             }
         } catch (IOException e) {
-            log.error("Failed to load ssh stdout.", e);
+            logger.error("Failed to load ssh stdout.", e);
         }
-        log.info("Cmd[{}] finished, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
+        logger.info("Cmd[{}] finished, and spends {}ms.", cmd, System.currentTimeMillis() - startTime);
         session.close();
         return sb.toString();
     }

@@ -3,6 +3,8 @@ package com.katus.common.util;
 import java.io.*;
 
 /**
+ * IO工具类
+ *
  * @author SUN Katus
  * @version 1.0, 2021-06-25
  */
@@ -11,8 +13,9 @@ public final class IOUtils {
 
     /**
      * 执行 IO (从输入流向输出流复制字节)
-     * @param is 输入流
-     * @param os 输出流
+     *
+     * @param is         输入流
+     * @param os         输出流
      * @param bufferSize 缓冲大小 (单位为字节)
      * @throws IOException IO异常
      */
@@ -40,8 +43,9 @@ public final class IOUtils {
 
     /**
      * 执行 IO (从输入流向输出流复制字符)
-     * @param reader 字符输入流
-     * @param writer 字符输出流
+     *
+     * @param reader     字符输入流
+     * @param writer     字符输出流
      * @param bufferSize 缓冲大小 (单位为字符)
      * @throws IOException IO异常
      */
@@ -119,6 +123,7 @@ public final class IOUtils {
 
     /**
      * 关闭可关闭对象
+     *
      * @param closeables 可关闭对象
      */
     public static void closeAll(Closeable... closeables) {

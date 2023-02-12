@@ -16,12 +16,10 @@
         <dependency>
             <groupId>com.katus</groupId>
             <artifactId>gis-regression-analysis-common</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
             <artifactId>nd4j-native-platform</artifactId>
-            <version>${nd4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

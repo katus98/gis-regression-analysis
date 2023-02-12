@@ -9,6 +9,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,7 +27,7 @@ public class AdvancedProcessCost {
 
     static {
         // 构建连接池配置
-        GenericObjectPoolConfig<?> poolConfig = new GenericObjectPoolConfig<>();
+        GenericObjectPoolConfig<Jedis> poolConfig = new GenericObjectPoolConfig<>();
         // 最大活跃数
         poolConfig.setMaxTotal(NUM_THREAD);
         // 最大空闲数
@@ -34,7 +35,7 @@ public class AdvancedProcessCost {
         // 最小空闲数
         poolConfig.setMinIdle(0);
         // 当连接池空了之后, 多久没获取到Jedis对象则超时
-        poolConfig.setMaxWaitMillis(-1);
+        poolConfig.setMaxWait(Duration.ofMinutes(1L));
         // 构建连接池时直接指定密码
         JEDIS_POOL = new JedisPool(poolConfig, "localhost", 6379, 3000, "skrv587");
     }

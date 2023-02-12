@@ -21,22 +21,85 @@
         <maven.compiler.target>8</maven.compiler.target>
         <java.version>1.8</java.version>
         <springboot.version>2.4.5</springboot.version>
-        <lombok.version>1.18.20</lombok.version>
         <sshd-sftp.version>2.6.0</sshd-sftp.version>
         <jsch.version>0.1.55</jsch.version>
         <trilead-ssh2.version>1.0.0-build222</trilead-ssh2.version>
+        <slf4j.version>1.7.32</slf4j.version>
+        <logback.version>1.2.3</logback.version>
+        <hikari.version>4.0.3</hikari.version>
+        <postgresql.version>42.5.1</postgresql.version>
+        <lombok.version>1.18.24</lombok.version>
         <nd4j.version>1.0.0-M1.1</nd4j.version>
+        <jedis.version>4.3.1</jedis.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Spring Boot 父级依赖 -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${springboot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
+                <groupId>com.trilead</groupId>
+                <artifactId>trilead-ssh2</artifactId>
+                <version>${trilead-ssh2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jcraft</groupId>
+                <artifactId>jsch</artifactId>
+                <version>${jsch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-sftp</artifactId>
+                <version>${sshd-sftp.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.nd4j</groupId>
+                <artifactId>nd4j-native-platform</artifactId>
+                <version>${nd4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>redis.clients</groupId>
+                <artifactId>jedis</artifactId>
+                <version>${jedis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <optional>true</optional>
+            </dependency>
+            <dependency>
+                <groupId>com.katus</groupId>
+                <artifactId>gis-regression-analysis-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.katus</groupId>
+                <artifactId>gis-regression-analysis-core</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -1,10 +1,11 @@
 package com.katus.common.tool;
 
+import com.jcraft.jsch.*;
 import com.katus.common.io.FsManipulator;
 import com.katus.common.io.FsManipulatorFactory;
 import com.katus.common.util.Strings;
-import com.jcraft.jsch.*;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -17,8 +18,8 @@ import java.util.Vector;
  * @author SUN Katus, jiarui
  * @version 2.0, 2021-06-24
  */
-@Slf4j
 public class SecureFileTransmitter implements Closeable {
+    private static final Logger logger = LoggerFactory.getLogger(SecureFileTransmitter.class);
     /**
      * sftp通道
      */
@@ -286,7 +287,7 @@ public class SecureFileTransmitter implements Closeable {
         Channel channel = session.openChannel("sftp");
         channel.connect();
         this.channelSftp = (ChannelSftp) channel;
-        log.info("Login sftp server successfully!");
+        logger.info("Login sftp server successfully!");
     }
 
     /**
