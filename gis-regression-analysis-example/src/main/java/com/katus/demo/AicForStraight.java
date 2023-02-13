@@ -29,7 +29,7 @@ public class AicForStraight {
         String trainFilename = args[0];
         int numThread = Integer.parseInt(args[1]);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainFilename);
 
         double[] bandwidths = new double[50];
         for (int i = 0; i < bandwidths.length; i++) {

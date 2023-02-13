@@ -28,8 +28,8 @@ public class StraightOls {
         String resultFilename = args[2];
         int numThread = Integer.parseInt(args[3]);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
-        HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainingFilename);
+        HaiNingDataSet tempDataSet = BasicFunctions.readHaiNingDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
 
         MultipleLinearRegression<HaiNingRecord, HaiNingResultRecord> regression = new MultipleLinearRegression.MultipleLinearRegressionBuilder<HaiNingRecord, HaiNingResultRecord>()
@@ -43,6 +43,6 @@ public class StraightOls {
         GlobalRSquare rSquare = new GlobalRSquare(resultDataSet.yMatrix(), resultDataSet.predictions());
         log.info("Global R Square: {}", rSquare.getR2());
 
-        BasicFunctions.writeResultDataSet(resultFilename, resultDataSet);
+        BasicFunctions.writeHaiNingResultDataSet(resultFilename, resultDataSet);
     }
 }

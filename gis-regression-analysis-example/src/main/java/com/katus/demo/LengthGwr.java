@@ -37,8 +37,8 @@ public class LengthGwr {
         double bandwidth = Double.parseDouble(args[3]);
         int numThread = Integer.parseInt(args[4]);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
-        HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainingFilename);
+        HaiNingDataSet tempDataSet = BasicFunctions.readHaiNingDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
 
         GenericObjectPoolConfig<Jedis> poolConfig = new GenericObjectPoolConfig<>();
@@ -72,6 +72,6 @@ public class LengthGwr {
                 .build();
         localRSquare.test();
 
-        BasicFunctions.writeResultDataSet(resultFilename, resultDataSet);
+        BasicFunctions.writeHaiNingResultDataSet(resultFilename, resultDataSet);
     }
 }

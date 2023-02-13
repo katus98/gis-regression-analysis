@@ -44,8 +44,8 @@ public class CostGwr {
         log.info("Result Data: {}", resultFilename);
         log.info("Bandwidth: {} {}", type, bandwidth);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
-        HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainingFilename);
+        HaiNingDataSet tempDataSet = BasicFunctions.readHaiNingDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
 
         GenericObjectPoolConfig<Jedis> poolConfig = new GenericObjectPoolConfig<>();
@@ -79,6 +79,6 @@ public class CostGwr {
                 .build();
         localRSquare.test();
 
-        BasicFunctions.writeResultDataSet(resultFilename, resultDataSet);
+        BasicFunctions.writeHaiNingResultDataSet(resultFilename, resultDataSet);
     }
 }

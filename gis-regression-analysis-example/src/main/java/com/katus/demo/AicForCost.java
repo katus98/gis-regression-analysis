@@ -39,7 +39,7 @@ public class AicForCost {
         log.info("Bandwidth Type: {}", type);
         log.info("Test Ratio: {}", ratio);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainFilename);
 
         double[] bandwidths = new double[25];
         for (int i = 0; i < bandwidths.length; i++) {

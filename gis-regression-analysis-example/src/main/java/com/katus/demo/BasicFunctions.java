@@ -3,10 +3,7 @@ package com.katus.demo;
 import com.katus.common.io.FsManipulator;
 import com.katus.common.io.FsManipulatorFactory;
 import com.katus.common.io.LineIterator;
-import com.katus.data.HaiNingDataSet;
-import com.katus.data.HaiNingRecord;
-import com.katus.data.HaiNingResultDataSet;
-import com.katus.data.HaiNingResultRecord;
+import com.katus.data.*;
 import com.katus.exception.DataException;
 import com.katus.global.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +33,7 @@ public class BasicFunctions {
         }
     }
 
-    public static HaiNingDataSet readDataSet(String filename) {
+    public static HaiNingDataSet readHaiNingDataSet(String filename) {
         return new HaiNingDataSet(() -> {
             FsManipulator fsManipulator = FsManipulatorFactory.create();
             List<HaiNingRecord> list = new ArrayList<>();
@@ -54,7 +51,7 @@ public class BasicFunctions {
         });
     }
 
-    public static void writeResultDataSet(String filename, HaiNingResultDataSet resultDataSet) {
+    public static void writeHaiNingResultDataSet(String filename, HaiNingResultDataSet resultDataSet) {
         resultDataSet.output(list -> {
             List<String> lines = list.stream().map(HaiNingResultRecord::put).collect(Collectors.toList());
             FsManipulator fsManipulator = FsManipulatorFactory.create();
@@ -63,6 +60,25 @@ public class BasicFunctions {
                     "beta_traffic,r_square,lon_x,lat_y");
             try {
                 fsManipulator.writeTextToFile(filename, lines);
+            } catch (IOException e) {
+                log.error("write result dataset error!", e);
+                throw new DataException();
+            }
+        });
+    }
+
+    public static void writeJinHuaResultDataSet(String filename, JinHuaResultDataSet resultDataSet) {
+        resultDataSet.output(list -> {
+            List<String> contents = new ArrayList<>();
+            contents.add("id,death_index,velocity,flow,ill_scramble_count,ill_behavior_count,ill_reverse_count," +
+                    "ill_overspeed_count,ill_signals_count,ill_others_count,poi_car_count,poi_entertainment_count," +
+                    "poi_food_count,poi_traffic_count,death_index_pre,beta_0,beta_velocity,beta_flow,beta_ill_scramble_count," +
+                    "beta_ill_behavior_count,beta_ill_reverse_count,beta_ill_overspeed_count,beta_ill_signals_count,beta_ill_others_count," +
+                    "beta_poi_car_count,beta_poi_entertainment_count,beta_poi_food_count,beta_poi_traffic_count,r_square,lon_x,lat_y");
+            contents.addAll(list.stream().map(JinHuaResultRecord::put).collect(Collectors.toList()));
+            FsManipulator fsManipulator = FsManipulatorFactory.create();
+            try {
+                fsManipulator.writeTextToFile(filename, contents);
             } catch (IOException e) {
                 log.error("write result dataset error!", e);
                 throw new DataException();

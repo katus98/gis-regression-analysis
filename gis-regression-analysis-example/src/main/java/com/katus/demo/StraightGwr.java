@@ -32,8 +32,8 @@ public class StraightGwr {
         double bandwidth = Double.parseDouble(args[3]);
         int numThread = Integer.parseInt(args[4]);
 
-        HaiNingDataSet trainingDataSet = BasicFunctions.readDataSet(trainingFilename);
-        HaiNingDataSet tempDataSet = BasicFunctions.readDataSet(predictFilename);
+        HaiNingDataSet trainingDataSet = BasicFunctions.readHaiNingDataSet(trainingFilename);
+        HaiNingDataSet tempDataSet = BasicFunctions.readHaiNingDataSet(predictFilename);
         HaiNingResultDataSet resultDataSet = tempDataSet.convertToResultDataSet(HaiNingResultRecord.class, HaiNingResultDataSet.class);
 
         StraightWeightCalculator weightCalculator = new StraightWeightCalculator.StraightWeightCalculatorBuilder()
@@ -59,6 +59,6 @@ public class StraightGwr {
                 .build();
         localRSquare.test();
 
-        BasicFunctions.writeResultDataSet(resultFilename, resultDataSet);
+        BasicFunctions.writeHaiNingResultDataSet(resultFilename, resultDataSet);
     }
 }
