@@ -83,8 +83,8 @@ public final class QueryUtil {
      */
     public static Set<Long> queryEdgeIdsWithinRange(long id, double radius) throws SQLException {
         Set<Long> idSet = new HashSet<>();
-        String sql = String.format("WITH ip AS (SELECT gemo AS p FROM graph_nodes_jinhua WHERE id = %d)" +
-                        " SELECT id FROM graph_edges_jinhua WHERE ST_Intersects(geom, ST_Buffer(ST_SetSRID(ip.p, %d), %f))",
+        String sql = String.format("WITH ip AS (SELECT geom AS p FROM graph_nodes_jinhua WHERE id = %d)" +
+                        " SELECT id FROM graph_edges_jinhua, ip WHERE ST_Intersects(geom, ST_Buffer(ST_SetSRID(ip.p, %d), %f))",
                 id, GlobalConfig.SRID_WGS84_UTM_50N, radius);
         Connection conn = GlobalConfig.PG_SOURCE.getConnection();
         Statement stmt = conn.createStatement();
@@ -103,8 +103,8 @@ public final class QueryUtil {
      */
     public static Map<Long, GraphNode> queryNodeIdsWithinRange(long id, double radius) throws SQLException {
         Map<Long, GraphNode> idMap = new LinkedHashMap<>();
-        String sql = String.format("WITH ip AS (SELECT gemo AS p FROM graph_nodes_jinhua WHERE id = %d)" +
-                        " SELECT id FROM graph_nodes_jinhua WHERE ST_Intersects(geom, ST_Buffer(ST_SetSRID(ip.p, %d), %f))",
+        String sql = String.format("WITH ip AS (SELECT geom AS p FROM graph_nodes_jinhua WHERE id = %d)" +
+                        " SELECT id FROM graph_nodes_jinhua, ip WHERE ST_Intersects(geom, ST_Buffer(ST_SetSRID(ip.p, %d), %f))",
                 id, GlobalConfig.SRID_WGS84_UTM_50N, radius);
         Connection conn = GlobalConfig.PG_SOURCE.getConnection();
         Statement stmt = conn.createStatement();
