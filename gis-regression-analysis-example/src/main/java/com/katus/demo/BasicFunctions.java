@@ -8,11 +8,13 @@ import com.katus.data.HaiNingRecord;
 import com.katus.data.HaiNingResultDataSet;
 import com.katus.data.HaiNingResultRecord;
 import com.katus.exception.DataException;
+import com.katus.global.QueryUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.nd4j.linalg.api.buffer.DataType;
 import org.nd4j.linalg.factory.Nd4j;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,12 @@ public class BasicFunctions {
 
     public static void firstConfig() {
         Nd4j.setDefaultDataTypes(DataType.DOUBLE, DataType.DOUBLE);
+        try {
+            QueryUtil.loadBothIds();
+        } catch (SQLException e) {
+            log.error("LOAD IDS ERROR", e);
+            throw new RuntimeException(e);
+        }
     }
 
     public static HaiNingDataSet readDataSet(String filename) {
