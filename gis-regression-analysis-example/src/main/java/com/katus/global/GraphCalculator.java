@@ -16,6 +16,7 @@ import java.util.Set;
  */
 @Slf4j
 public class GraphCalculator {
+    private static final double MIN_COST = 0.1;
     /**
      * 图节点计算数据结构
      */
@@ -103,7 +104,7 @@ public class GraphCalculator {
                     long endId = endPointId;
                     // 设置起点信息
                     GraphNode startGraphNode = nodeGraphMap.get(endId);
-                    startGraphNode.setCumulativeCost(0);
+                    startGraphNode.setCumulativeCost(MIN_COST);
                     startGraphNode.setVisited(true);
                     // 获取从起点开始的所有边
                     List<Edge> edges = QueryUtil.acquireAllEdges(endId);
@@ -159,9 +160,5 @@ public class GraphCalculator {
                 }
             }
         }
-    }
-
-    private static double fixCost(double cost) {
-        return Math.max(cost, 0.0);
     }
 }
