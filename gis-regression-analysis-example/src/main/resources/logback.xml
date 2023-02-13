@@ -13,12 +13,14 @@ configuration 子节点为 appender、logger、root
     <contextName>gis-regression-analysis-example</contextName>
     <!--日志文件所在目录，如果是tomcat，如下写法日志文件会在则为${TOMCAT_HOME}/bin/logs/目录下-->
     <property name="LOG_HOME" value="logs"/>
+    <property name="CONSOLE_LOG_PATTERN_CUSTOMIZED"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%thread]) %cyan(%logger{50}:%L) : %msg%n" />
 
     <!--控制台-->
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %logger输出日志的logger名 %msg：日志消息，%n是换行符 -->
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{96} : %msg%n</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN_CUSTOMIZED}</pattern>
             <!--解决乱码问题-->
             <charset>UTF-8</charset>
         </encoder>
